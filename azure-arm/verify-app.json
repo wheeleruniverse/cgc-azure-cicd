@@ -36,17 +36,6 @@
     "resources":[
         {
             "apiVersion":"2020-04-01",
-            "dependsOn":[
-                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('name'))]"
-            ],
-            "name":"[concat(parameters('name'), '/default')]",
-            "properties":{
-                
-            },
-            "type":"Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces"
-        },
-        {
-            "apiVersion":"2020-04-01",
             "kind":"GlobalDocumentDB",
             "location":"[parameters('location')]",
             "name":"[parameters('name')]",
@@ -90,85 +79,15 @@
             "type":"Microsoft.DocumentDb/databaseAccounts"
         },
         {
-            "apiVersion":"2018-11-01",
+            "apiVersion":"2020-04-01",
             "dependsOn":[
-                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('name'))]"
             ],
-            "location":"[parameters('locationName')]",
-            "name":"[parameters('name')]",
+            "name":"[concat(parameters('name'), '/default')]",
             "properties":{
-                "clientAffinityEnabled":false,
-                "name":"[parameters('name')]",
-                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "siteConfig":{
-                    "alwaysOn":true,
-                    "appSettings":[
-                        
-                    ],
-                    "linuxFxVersion":"RUBY|2.6"
-                }
-            },
-            "tags":{
-                "Name":"[parameters('name')]",
-                "Project":"[parameters('project')]"
-            },
-            "type":"Microsoft.Web/sites"
-        },
-        {
-            "apiVersion":"2018-11-01",
-            "dependsOn":[
                 
-            ],
-            "kind":"linux",
-            "location":"[parameters('locationName')]",
-            "name":"[parameters('hostingPlanName')]",
-            "properties":{
-                "name":"[parameters('hostingPlanName')]",
-                "numberOfWorkers":"[parameters('numberOfWorkers')]",
-                "reserved":true,
-                "workerSize":"[parameters('workerSize')]",
-                "workerSizeId":"[parameters('workerSizeId')]"
             },
-            "sku":{
-                "Tier":"Standard",
-                "Name":"S1"
-            },
-            "tags":{
-                "Name":"[parameters('name')]",
-                "Project":"[parameters('project')]"
-            },
-            "type":"Microsoft.Web/serverfarms"
-        },
-        {
-            "apiVersion":"2019-06-01",
-            "dependsOn":[
-                
-            ],
-            "kind":"StorageV2",
-            "location":"[parameters('location')]",
-            "name":"[parameters('storageAccountName')]",
-            "properties":{
-                "accessTier":"Hot",
-                "allowBlobPublicAccess":false,
-                "allowSharedKeyAccess":true,
-                "minimumTlsVersion":"TLS1_2",
-                "networkAcls":{
-                    "bypass":"AzureServices",
-                    "defaultAction":"Allow",
-                    "ipRules":[
-                        
-                    ]
-                },
-                "supportsHttpsTrafficOnly":true
-            },
-            "sku":{
-                "name":"Standard_LRS"
-            },
-            "tags":{
-                "Name":"[parameters('name')]",
-                "Project":"[parameters('project')]"
-            },
-            "type":"Microsoft.Storage/storageAccounts"
+            "type":"Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces"
         },
         {
             "apiVersion":"2020-07-01",
@@ -304,6 +223,87 @@
                 "Project":"[parameters('project')]"
             },
             "type":"Microsoft.Network/VirtualNetworks"
+        },
+        {
+            "apiVersion":"2019-06-01",
+            "dependsOn":[
+                
+            ],
+            "kind":"StorageV2",
+            "location":"[parameters('location')]",
+            "name":"[parameters('storageAccountName')]",
+            "properties":{
+                "accessTier":"Hot",
+                "allowBlobPublicAccess":false,
+                "allowSharedKeyAccess":true,
+                "minimumTlsVersion":"TLS1_2",
+                "networkAcls":{
+                    "bypass":"AzureServices",
+                    "defaultAction":"Allow",
+                    "ipRules":[
+                        
+                    ]
+                },
+                "supportsHttpsTrafficOnly":true
+            },
+            "sku":{
+                "name":"Standard_LRS"
+            },
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Storage/storageAccounts"
+        },
+        {
+            "apiVersion":"2018-11-01",
+            "dependsOn":[
+                
+            ],
+            "kind":"linux",
+            "location":"[parameters('locationName')]",
+            "name":"[parameters('hostingPlanName')]",
+            "properties":{
+                "name":"[parameters('hostingPlanName')]",
+                "numberOfWorkers":"[parameters('numberOfWorkers')]",
+                "reserved":true,
+                "workerSize":"[parameters('workerSize')]",
+                "workerSizeId":"[parameters('workerSizeId')]"
+            },
+            "sku":{
+                "Tier":"Standard",
+                "Name":"S1"
+            },
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Web/serverfarms"
+        },
+        {
+            "apiVersion":"2018-11-01",
+            "dependsOn":[
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+            ],
+            "location":"[parameters('locationName')]",
+            "name":"[parameters('name')]",
+            "properties":{
+                "clientAffinityEnabled":false,
+                "name":"[parameters('name')]",
+                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "siteConfig":{
+                    "alwaysOn":true,
+                    "appSettings":[
+                        
+                    ],
+                    "linuxFxVersion":"RUBY|2.6"
+                }
+            },
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Web/sites"
         }
     ],
     "variables":{
