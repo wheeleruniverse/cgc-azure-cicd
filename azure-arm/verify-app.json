@@ -14,7 +14,7 @@
         "hostingPlanName": {
             "type": "string"
         },
-        "serverFarmResourceGroup": {
+        "resourceGroup": {
             "type": "string"
         },
         "workerSize": {
@@ -96,7 +96,7 @@
                     "linuxFxVersion": "RUBY|2.6",
                     "alwaysOn": true
                 },
-                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
                 "clientAffinityEnabled": false
             }
         },
@@ -237,7 +237,52 @@
 			],
 			"enabledState": "Enabled"
 		  }
-		}
+		},
+		{
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Network/VirtualNetworks",
+            "apiVersion": "2019-09-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "Project": "[parameters('project')]",
+                "Name": "[parameters('name')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/20"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "public-1",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24"
+                        }
+                    },
+                    {
+                        "name": "public-2",
+                        "properties": {
+                            "addressPrefix": "10.0.1.0/24"
+                        }
+                    },
+                    {
+                        "name": "private-1",
+                        "properties": {
+                            "addressPrefix": "10.0.15.0/24"
+                        }
+                    },
+                    {
+                        "name": "private-2",
+                        "properties": {
+                            "addressPrefix": "10.0.14.0/24"
+                        }
+                    }
+                ],
+                "enableDdosProtection": false
+            }
+        }
     ],
     "outputs": {}
 }

@@ -20,7 +20,7 @@
         "hostingPlanName": {
             "value": "ASP-CloudGuruChallenge0121-9046"
         },
-        "serverFarmResourceGroup": {
+        "resourceGroup": {
             "value": "CloudGuruChallenge0121"
         },
         "workerSize": {
