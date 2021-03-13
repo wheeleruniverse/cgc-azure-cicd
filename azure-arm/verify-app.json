@@ -17,12 +17,6 @@
         "serverFarmResourceGroup": {
             "type": "string"
         },
-        "sku": {
-            "type": "string"
-        },
-        "skuCode": {
-            "type": "string"
-        },
         "workerSize": {
             "type": "string"
         },
@@ -32,7 +26,7 @@
         "numberOfWorkers": {
             "type": "string"
         },
-        "linuxFxVersion": {
+        "storageAccountName": {
             "type": "string"
         }
     },
@@ -99,7 +93,7 @@
                 "name": "[parameters('name')]",
                 "siteConfig": {
                     "appSettings": [],
-                    "linuxFxVersion": "[parameters('linuxFxVersion')]",
+                    "linuxFxVersion": "RUBY|2.6",
                     "alwaysOn": true
                 },
                 "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
@@ -125,8 +119,35 @@
                 "reserved": true
             },
             "sku": {
-                "Tier": "[parameters('sku')]",
-                "Name": "[parameters('skuCode')]"
+                "Tier": "Standard",
+                "Name": "S1"
+            }
+        },
+        {
+            "name": "[parameters('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accessTier": "Hot",
+                "minimumTlsVersion": "TLS1_2",
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": true,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Allow",
+                    "ipRules": []
+                }
+            },
+            "dependsOn": [],
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "tags": {
+                "Project": "[parameters('project')]",
+                "Name": "[parameters('name')]"
             }
         }
     ],
