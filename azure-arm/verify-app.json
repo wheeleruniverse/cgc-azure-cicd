@@ -1,288 +1,312 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "name": {
-            "type": "string"
+    "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion":"1.0.0.0",
+    "outputs":{
+        
+    },
+    "parameters":{
+        "hostingPlanName":{
+            "type":"string"
         },
-        "location": {
-            "type": "string"
+        "location":{
+            "type":"string"
         },
-        "locationName": {
-            "type": "string"
+        "locationName":{
+            "type":"string"
         },
-        "hostingPlanName": {
-            "type": "string"
+        "name":{
+            "type":"string"
         },
-        "resourceGroup": {
-            "type": "string"
+        "numberOfWorkers":{
+            "type":"string"
         },
-        "workerSize": {
-            "type": "string"
+        "resourceGroup":{
+            "type":"string"
         },
-        "workerSizeId": {
-            "type": "string"
+        "storageAccountName":{
+            "type":"string"
         },
-        "numberOfWorkers": {
-            "type": "string"
+        "workerSize":{
+            "type":"string"
         },
-        "storageAccountName": {
-            "type": "string"
+        "workerSizeId":{
+            "type":"string"
         }
     },
-    "variables": {},
-    "resources": [
+    "resources":[
         {
-            "name": "[concat(parameters('name'), '/default')]",
-            "type": "Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces",
-            "properties": {},
-            "dependsOn": [
+            "apiVersion":"2020-04-01",
+            "dependsOn":[
                 "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('name'))]"
             ],
-            "apiVersion": "2020-04-01"
+            "name":"[concat(parameters('name'), '/default')]",
+            "properties":{
+                
+            },
+            "type":"Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces"
         },
         {
-            "apiVersion": "2020-04-01",
-            "kind": "GlobalDocumentDB",
-            "type": "Microsoft.DocumentDb/databaseAccounts",
-            "name": "[parameters('name')]",
-            "location": "[parameters('location')]",
-            "properties": {
-                "databaseAccountOfferType": "Standard",
-                "locations": [
+            "apiVersion":"2020-04-01",
+            "kind":"GlobalDocumentDB",
+            "location":"[parameters('location')]",
+            "name":"[parameters('name')]",
+            "properties":{
+                "backupPolicy":{
+                    "type":"Periodic",
+                    "periodicModeProperties":{
+                        "backupIntervalInMinutes":240,
+                        "backupRetentionIntervalInHours":8
+                    }
+                },
+                "capabilities":[
+                    
+                ],
+                "databaseAccountOfferType":"Standard",
+                "dependsOn":[
+                    
+                ],
+                "enableFreeTier":true,
+                "enableMultipleWriteLocations":false,
+                "ipRules":[
+                    
+                ],
+                "isVirtualNetworkFilterEnabled":false,
+                "locations":[
                     {
-                        "id": "[concat(parameters('name'), '-', parameters('location'))]",
-                        "failoverPriority": 0,
-                        "locationName": "[parameters('locationName')]"
+                        "id":"[concat(parameters('name'), '-', parameters('location'))]",
+                        "failoverPriority":0,
+                        "locationName":"[parameters('locationName')]"
                     }
                 ],
-                "backupPolicy": {
-                    "type": "Periodic",
-                    "periodicModeProperties": {
-                        "backupIntervalInMinutes": 240,
-                        "backupRetentionIntervalInHours": 8
-                    }
-                },
-                "isVirtualNetworkFilterEnabled": false,
-                "virtualNetworkRules": [],
-                "ipRules": [],
-                "dependsOn": [],
-                "enableMultipleWriteLocations": false,
-                "capabilities": [],
-                "enableFreeTier": true
+                "virtualNetworkRules":[
+                    
+                ]
             },
-            "tags": {
-                "Project": "[parameters('project')]",
-                "Name": "[parameters('name')]",
-                "CosmosAccountType": "Non-Production"
-            }
+            "tags":{
+                "CosmosAccountType":"Non-Production",
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.DocumentDb/databaseAccounts"
         },
         {
-            "apiVersion": "2018-11-01",
-            "name": "[parameters('name')]",
-            "type": "Microsoft.Web/sites",
-            "location": "[parameters('locationName')]",
-            "tags": {
-                "Project": "[parameters('project')]",
-                "Name": "[parameters('name')]",
-            },
-            "dependsOn": [
+            "apiVersion":"2018-11-01",
+            "dependsOn":[
                 "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
             ],
-            "properties": {
-                "name": "[parameters('name')]",
-                "siteConfig": {
-                    "appSettings": [],
-                    "linuxFxVersion": "RUBY|2.6",
-                    "alwaysOn": true
-                },
-                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "clientAffinityEnabled": false
-            }
-        },
-        {
-            "apiVersion": "2018-11-01",
-            "name": "[parameters('hostingPlanName')]",
-            "type": "Microsoft.Web/serverfarms",
-            "location": "[parameters('locationName')]",
-            "kind": "linux",
-            "tags": {
-                "Project": "[parameters('project')]",
-                "Name": "[parameters('name')]",
-            },
-            "dependsOn": [],
-            "properties": {
-                "name": "[parameters('hostingPlanName')]",
-                "workerSize": "[parameters('workerSize')]",
-                "workerSizeId": "[parameters('workerSizeId')]",
-                "numberOfWorkers": "[parameters('numberOfWorkers')]",
-                "reserved": true
-            },
-            "sku": {
-                "Tier": "Standard",
-                "Name": "S1"
-            }
-        },
-        {
-            "name": "[parameters('storageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2019-06-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "accessTier": "Hot",
-                "minimumTlsVersion": "TLS1_2",
-                "supportsHttpsTrafficOnly": true,
-                "allowBlobPublicAccess": false,
-                "allowSharedKeyAccess": true,
-                "networkAcls": {
-                    "bypass": "AzureServices",
-                    "defaultAction": "Allow",
-                    "ipRules": []
+            "location":"[parameters('locationName')]",
+            "name":"[parameters('name')]",
+            "properties":{
+                "clientAffinityEnabled":false,
+                "name":"[parameters('name')]",
+                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "siteConfig":{
+                    "alwaysOn":true,
+                    "appSettings":[
+                        
+                    ],
+                    "linuxFxVersion":"RUBY|2.6"
                 }
             },
-            "dependsOn": [],
-            "sku": {
-                "name": "Standard_LRS"
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
             },
-            "kind": "StorageV2",
-            "tags": {
-                "Project": "[parameters('project')]",
-                "Name": "[parameters('name')]"
-            }
+            "type":"Microsoft.Web/sites"
         },
-		{
-		  "type": "Microsoft.Network/frontDoors",
-		  "apiVersion": "2020-07-01",
-		  "name": "[parameters('frontDoorName')]",
-		  "location": "global",
-		  "properties": {
-			"routingRules": [
-			  {
-				"name": "routingRule1",
-				"properties": {
-				  "frontendEndpoints": [
-					{
-					  "id": "[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('frontDoorName'), 'frontendEndpoint1')]"
-					}
-				  ],
-				  "acceptedProtocols": [
-					"Http",
-					"Https"
-				  ],
-				  "patternsToMatch": [
-					"/*"
-				  ],
-				  "routeConfiguration": {
-					"@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
-					"forwardingProtocol": "MatchRequest",
-					"backendPool": {
-					  "id": "[resourceId('Microsoft.Network/frontDoors/backendPools', parameters('frontDoorName'), 'backendPool1')]"
-					}
-				  },
-				  "enabledState": "Enabled"
-				}
-			  }
-			],
-			"healthProbeSettings": [
-			  {
-				"name": "healthProbeSettings1",
-				"properties": {
-				  "path": "/",
-				  "protocol": "Http",
-				  "intervalInSeconds": 120
-				}
-			  }
-			],
-			"loadBalancingSettings": [
-			  {
-				"name": "loadBalancingSettings1",
-				"properties": {
-				  "sampleSize": 4,
-				  "successfulSamplesRequired": 2
-				}
-			  }
-			],
-			"backendPools": [
-			  {
-				"name": "backendPool1",
-				"properties": {
-				  "backends": [
-					{
-					  "address": "[parameters('backendAddress')]",
-					  "backendHostHeader": "[parameters('backendAddress')]",
-					  "httpPort": 80,
-					  "httpsPort": 443,
-					  "weight": 50,
-					  "priority": 1,
-					  "enabledState": "Enabled"
-					}
-				  ],
-				  "loadBalancingSettings": {
-					"id": "[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('frontDoorName'), 'loadBalancingSettings1')]"
-				  },
-				  "healthProbeSettings": {
-					"id": "[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('frontDoorName'), 'healthProbeSettings1')]"
-				  }
-				}
-			  }
-			],
-			"frontendEndpoints": [
-			  {
-				"name": "frontendEndpoint1",
-				"properties": {
-				  "hostName": "[concat(parameters('frontDoorName'), '.azurefd.net')]",
-				  "sessionAffinityEnabledState": "Disabled"
-				}
-			  }
-			],
-			"enabledState": "Enabled"
-		  }
-		},
-		{
-            "name": "[parameters('name')]",
-            "type": "Microsoft.Network/VirtualNetworks",
-            "apiVersion": "2019-09-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [],
-            "tags": {
-                "Project": "[parameters('project')]",
-                "Name": "[parameters('name')]"
+        {
+            "apiVersion":"2018-11-01",
+            "dependsOn":[
+                
+            ],
+            "kind":"linux",
+            "location":"[parameters('locationName')]",
+            "name":"[parameters('hostingPlanName')]",
+            "properties":{
+                "name":"[parameters('hostingPlanName')]",
+                "numberOfWorkers":"[parameters('numberOfWorkers')]",
+                "reserved":true,
+                "workerSize":"[parameters('workerSize')]",
+                "workerSizeId":"[parameters('workerSizeId')]"
             },
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
+            "sku":{
+                "Tier":"Standard",
+                "Name":"S1"
+            },
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Web/serverfarms"
+        },
+        {
+            "apiVersion":"2019-06-01",
+            "dependsOn":[
+                
+            ],
+            "kind":"StorageV2",
+            "location":"[parameters('location')]",
+            "name":"[parameters('storageAccountName')]",
+            "properties":{
+                "accessTier":"Hot",
+                "allowBlobPublicAccess":false,
+                "allowSharedKeyAccess":true,
+                "minimumTlsVersion":"TLS1_2",
+                "networkAcls":{
+                    "bypass":"AzureServices",
+                    "defaultAction":"Allow",
+                    "ipRules":[
+                        
+                    ]
+                },
+                "supportsHttpsTrafficOnly":true
+            },
+            "sku":{
+                "name":"Standard_LRS"
+            },
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Storage/storageAccounts"
+        },
+        {
+            "apiVersion":"2020-07-01",
+            "location":"global",
+            "name":"[parameters('frontDoorName')]",
+            "properties":{
+                "backendPools":[
+                    {
+                        "name":"backendPool1",
+                        "properties":{
+                            "backends":[
+                                {
+                                    "address":"[parameters('backendAddress')]",
+                                    "backendHostHeader":"[parameters('backendAddress')]",
+                                    "enabledState":"Enabled",
+                                    "httpPort":80,
+                                    "httpsPort":443,
+                                    "priority":1,
+                                    "weight":50
+                                }
+                            ],
+                            "healthProbeSettings":{
+                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('frontDoorName'), 'healthProbeSettings1')]"
+                            },
+                            "loadBalancingSettings":{
+                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('frontDoorName'), 'loadBalancingSettings1')]"
+                            }
+                        }
+                    }
+                ],
+                "enabledState":"Enabled",
+                "frontendEndpoints":[
+                    {
+                        "name":"frontendEndpoint1",
+                        "properties":{
+                            "hostName":"[concat(parameters('frontDoorName'), '.azurefd.net')]",
+                            "sessionAffinityEnabledState":"Disabled"
+                        }
+                    }
+                ],
+                "healthProbeSettings":[
+                    {
+                        "name":"healthProbeSettings1",
+                        "properties":{
+                            "intervalInSeconds":120,
+                            "path":"/",
+                            "protocol":"Http"
+                        }
+                    }
+                ],
+                "loadBalancingSettings":[
+                    {
+                        "name":"loadBalancingSettings1",
+                        "properties":{
+                            "sampleSize":4,
+                            "successfulSamplesRequired":2
+                        }
+                    }
+                ],
+                "routingRules":[
+                    {
+                        "name":"routingRule1",
+                        "properties":{
+                            "acceptedProtocols":[
+                                "Http",
+                                "Https"
+                            ],
+                            "enabledState":"Enabled",
+                            "frontendEndpoints":[
+                                {
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('frontDoorName'), 'frontendEndpoint1')]"
+                                }
+                            ],
+                            "patternsToMatch":[
+                                "/*"
+                            ],
+                            "routeConfiguration":{
+                                "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
+                                "backendPool":{
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', parameters('frontDoorName'), 'backendPool1')]"
+                                },
+                                "forwardingProtocol":"MatchRequest"
+                            }
+                        }
+                    }
+                ]
+            },
+            "type":"Microsoft.Network/frontDoors"
+        },
+        {
+            "apiVersion":"2019-09-01",
+            "dependsOn":[
+                
+            ],
+            "location":"[parameters('location')]",
+            "name":"[parameters('name')]",
+            "properties":{
+                "addressSpace":{
+                    "addressPrefixes":[
                         "10.0.0.0/20"
                     ]
                 },
-                "subnets": [
+                "enableDdosProtection":false,
+                "subnets":[
                     {
-                        "name": "public-1",
-                        "properties": {
-                            "addressPrefix": "10.0.0.0/24"
+                        "name":"public-1",
+                        "properties":{
+                            "addressPrefix":"10.0.0.0/24"
                         }
                     },
                     {
-                        "name": "public-2",
-                        "properties": {
-                            "addressPrefix": "10.0.1.0/24"
+                        "name":"public-2",
+                        "properties":{
+                            "addressPrefix":"10.0.1.0/24"
                         }
                     },
                     {
-                        "name": "private-1",
-                        "properties": {
-                            "addressPrefix": "10.0.15.0/24"
+                        "name":"private-1",
+                        "properties":{
+                            "addressPrefix":"10.0.15.0/24"
                         }
                     },
                     {
-                        "name": "private-2",
-                        "properties": {
-                            "addressPrefix": "10.0.14.0/24"
+                        "name":"private-2",
+                        "properties":{
+                            "addressPrefix":"10.0.14.0/24"
                         }
                     }
-                ],
-                "enableDdosProtection": false
-            }
+                ]
+            },
+            "tags":{
+                "Name":"[parameters('name')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Network/VirtualNetworks"
         }
     ],
-    "outputs": {}
+    "variables":{
+        
+    }
 }
