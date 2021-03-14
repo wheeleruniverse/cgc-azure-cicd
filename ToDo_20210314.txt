@@ -1,0 +1,5 @@
+# Connect VNet on Deployment
+# Block App Service Direct Access
+# Re-Direct Front Door HTTP to HTTPS
+# Deploy Ruby Code through Azure DevOps
+# Connect Ruby Code to Cosmos DB

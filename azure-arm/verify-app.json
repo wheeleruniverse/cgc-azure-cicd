@@ -256,9 +256,9 @@
             ],
             "kind":"linux",
             "location":"[parameters('locationName')]",
-            "name":"[parameters('hostingPlanName')]",
+            "name":"[parameters('name')]",
             "properties":{
-                "name":"[parameters('project')]",
+                "name":"[parameters('name')]",
                 "reserved":true,
                 "workerSize":"[parameters('workerSize')]"
             },
@@ -276,14 +276,14 @@
             "apiVersion":"2018-11-01",
             "dependsOn":[
                 "[concat('Microsoft.Network/VirtualNetworks/', parameters('name'))]",
-                "[concat('Microsoft.Web/serverfarms/', parameters('project'))]"
+                "[concat('Microsoft.Web/serverfarms/', parameters('name'))]"
             ],
             "location":"[parameters('locationName')]",
             "name":"[parameters('name')]",
             "properties":{
                 "clientAffinityEnabled":false,
                 "name":"[parameters('name')]",
-                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('project'))]",
+                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('name'))]",
                 "siteConfig":{
                     "alwaysOn":true,
                     "appSettings":[
