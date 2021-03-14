@@ -2,12 +2,6 @@
     "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion":"1.0.0.0",
     "parameters":{
-        "backendAddress":{
-            "value":"idk"
-        },
-        "frontDoorName":{
-            "value":"idk"
-        },
         "hostingPlanName":{
             "value":"ASP-CloudGuruChallenge0121-9046"
         },
@@ -19,9 +13,6 @@
         },
         "name":{
             "value":"wheeler-verify-app"
-        },
-        "numberOfWorkers":{
-            "value":"1"
         },
         "project":{
             "value":"CloudGuruChallenge_02.21"
@@ -36,9 +27,6 @@
             "value":"bffe7b68-d4fe-4573-a3be-63d2c36f49b5"
         },
         "workerSize":{
-            "value":"0"
-        },
-        "workerSizeId":{
             "value":"0"
         }
     }

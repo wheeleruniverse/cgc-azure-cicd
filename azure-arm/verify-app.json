@@ -17,7 +17,7 @@
         "name":{
             "type":"string"
         },
-        "numberOfWorkers":{
+        "project":{
             "type":"string"
         },
         "resourceGroup":{
@@ -26,10 +26,10 @@
         "storageAccountName":{
             "type":"string"
         },
-        "workerSize":{
+        "subscriptionId":{
             "type":"string"
         },
-        "workerSizeId":{
+        "workerSize":{
             "type":"string"
         }
     },
@@ -92,7 +92,7 @@
         {
             "apiVersion":"2020-07-01",
             "location":"global",
-            "name":"[parameters('frontDoorName')]",
+            "name":"[parameters('name')]",
             "properties":{
                 "backendPools":[
                     {
@@ -100,8 +100,8 @@
                         "properties":{
                             "backends":[
                                 {
-                                    "address":"[parameters('backendAddress')]",
-                                    "backendHostHeader":"[parameters('backendAddress')]",
+                                    "address":"[concat(parameters('name'), '.azurewebsites.net')]",
+                                    "backendHostHeader":"[concat(parameters('name'), '.azurewebsites.net')]",
                                     "enabledState":"Enabled",
                                     "httpPort":80,
                                     "httpsPort":443,
@@ -110,10 +110,10 @@
                                 }
                             ],
                             "healthProbeSettings":{
-                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('frontDoorName'), 'healthProbeSettings1')]"
+                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('name'), 'healthProbeSettings1')]"
                             },
                             "loadBalancingSettings":{
-                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('frontDoorName'), 'loadBalancingSettings1')]"
+                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('name'), 'loadBalancingSettings1')]"
                             }
                         }
                     }
@@ -123,7 +123,7 @@
                     {
                         "name":"frontendEndpoint1",
                         "properties":{
-                            "hostName":"[concat(parameters('frontDoorName'), '.azurefd.net')]",
+                            "hostName":"[concat(parameters('name'), '.azurefd.net')]",
                             "sessionAffinityEnabledState":"Disabled"
                         }
                     }
@@ -158,7 +158,7 @@
                             "enabledState":"Enabled",
                             "frontendEndpoints":[
                                 {
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('frontDoorName'), 'frontendEndpoint1')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('name'), 'frontendEndpoint1')]"
                                 }
                             ],
                             "patternsToMatch":[
@@ -167,7 +167,7 @@
                             "routeConfiguration":{
                                 "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
                                 "backendPool":{
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', parameters('frontDoorName'), 'backendPool1')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', parameters('name'), 'backendPool1')]"
                                 },
                                 "forwardingProtocol":"MatchRequest"
                             }
@@ -265,10 +265,8 @@
             "name":"[parameters('hostingPlanName')]",
             "properties":{
                 "name":"[parameters('hostingPlanName')]",
-                "numberOfWorkers":"[parameters('numberOfWorkers')]",
                 "reserved":true,
-                "workerSize":"[parameters('workerSize')]",
-                "workerSizeId":"[parameters('workerSizeId')]"
+                "workerSize":"[parameters('workerSize')]"
             },
             "sku":{
                 "Tier":"Standard",
@@ -283,6 +281,7 @@
         {
             "apiVersion":"2018-11-01",
             "dependsOn":[
+                "[concat('Microsoft.Network/VirtualNetworks/', parameters('name'))]",
                 "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
             ],
             "location":"[parameters('locationName')]",
@@ -296,8 +295,10 @@
                     "appSettings":[
                         
                     ],
-                    "linuxFxVersion":"RUBY|2.6"
-                }
+                    "linuxFxVersion":"RUBY|2.6",
+                    "numberOfWorkers":"3"
+                },
+                "vnetName":"[parameters('name')]"
             },
             "tags":{
                 "Name":"[parameters('name')]",
