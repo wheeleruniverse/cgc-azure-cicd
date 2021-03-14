@@ -5,9 +5,6 @@
         
     },
     "parameters":{
-        "hostingPlanName":{
-            "type":"string"
-        },
         "location":{
             "type":"string"
         },
@@ -18,9 +15,6 @@
             "type":"string"
         },
         "project":{
-            "type":"string"
-        },
-        "resourceGroup":{
             "type":"string"
         },
         "storageAccountName":{
@@ -264,7 +258,7 @@
             "location":"[parameters('locationName')]",
             "name":"[parameters('hostingPlanName')]",
             "properties":{
-                "name":"[parameters('hostingPlanName')]",
+                "name":"[parameters('project')]",
                 "reserved":true,
                 "workerSize":"[parameters('workerSize')]"
             },
@@ -282,14 +276,14 @@
             "apiVersion":"2018-11-01",
             "dependsOn":[
                 "[concat('Microsoft.Network/VirtualNetworks/', parameters('name'))]",
-                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+                "[concat('Microsoft.Web/serverfarms/', parameters('project'))]"
             ],
             "location":"[parameters('locationName')]",
             "name":"[parameters('name')]",
             "properties":{
                 "clientAffinityEnabled":false,
                 "name":"[parameters('name')]",
-                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('project'))]",
                 "siteConfig":{
                     "alwaysOn":true,
                     "appSettings":[
