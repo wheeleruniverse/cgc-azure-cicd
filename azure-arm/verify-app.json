@@ -317,11 +317,9 @@
                     "alwaysOn":true,
                     "ipSecurityRestrictions":[
                         {
-                            "vnetSubnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('name'), 'public-1')]",
                             "action":"Allow",
                             "priority":"1",
-                            "name":"AllowPublic1",
-                            "description":"allows the public-1 subnet"
+							"tag": "AzureFrontDoor.Backend"
                         }
                     ],
                     "linuxFxVersion":"RUBY|2.6",
@@ -333,7 +331,7 @@
                 {
                     "apiVersion":"2019-08-01",
                     "dependsOn":[
-                        "[resourceId('Microsoft.Web/sites', parameters('appName'))]"
+                        "[resourceId('Microsoft.Web/sites', parameters('name'))]"
                     ],
                     "name":"virtualNetwork",
                     "properties":{
