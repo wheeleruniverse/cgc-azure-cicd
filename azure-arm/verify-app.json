@@ -142,25 +142,25 @@
                     }
                 ],
                 "routingRules":[
-					{
-                        "name": "http",
-                        "properties": {
-                            "acceptedProtocols": [
+                    {
+                        "name":"http",
+                        "properties":{
+                            "acceptedProtocols":[
                                 "Http"
                             ],
-                            "enabledState": "Enabled"
-                            "frontendEndpoints": [
+                            "enabledState":"Enabled",
+                            "frontendEndpoints":[
                                 {
                                     "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('name'), 'frontend')]"
                                 }
                             ],
-                            "patternsToMatch": [
+                            "patternsToMatch":[
                                 "/*"
                             ],
-                            "routeConfiguration": {
-                                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorRedirectConfiguration",
-                                "redirectProtocol": "HttpsOnly",
-                                "redirectType": "Moved"                                
+                            "routeConfiguration":{
+                                "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorRedirectConfiguration",
+                                "redirectProtocol":"HttpsOnly",
+                                "redirectType":"Moved"
                             }
                         }
                     },
@@ -315,15 +315,15 @@
                 "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('name'))]",
                 "siteConfig":{
                     "alwaysOn":true,
-					"ipSecurityRestrictions": [
-					{
-					  "vnetSubnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('name'), 'public-1')]",
-					  "action": "Allow",
-					  "priority": "1",
-					  "name": "AllowPublic1",
-					  "description": "allows the public-1 subnet"
-					}
-				  ],
+                    "ipSecurityRestrictions":[
+                        {
+                            "vnetSubnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('name'), 'public-1')]",
+                            "action":"Allow",
+                            "priority":"1",
+                            "name":"AllowPublic1",
+                            "description":"allows the public-1 subnet"
+                        }
+                    ],
                     "linuxFxVersion":"RUBY|2.6",
                     "numberOfWorkers":"3"
                 },
