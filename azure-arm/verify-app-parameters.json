@@ -2,9 +2,6 @@
     "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion":"1.0.0.0",
     "parameters":{
-        "location":{
-            "value":"eastus"
-        },
         "locationName":{
             "value":"East US"
         },
@@ -16,9 +13,6 @@
         },
         "storageAccountName":{
             "value":"wheelerverifyapp"
-        },
-        "subscriptionId":{
-            "value":"bffe7b68-d4fe-4573-a3be-63d2c36f49b5"
         },
         "workerSize":{
             "value":"0"

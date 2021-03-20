@@ -5,9 +5,6 @@
         
     },
     "parameters":{
-        "location":{
-            "type":"string"
-        },
         "locationName":{
             "type":"string"
         },
@@ -20,9 +17,6 @@
         "storageAccountName":{
             "type":"string"
         },
-        "subscriptionId":{
-            "type":"string"
-        },
         "workerSize":{
             "type":"string"
         }
@@ -31,7 +25,7 @@
         {
             "apiVersion":"2020-04-01",
             "kind":"GlobalDocumentDB",
-            "location":"[parameters('location')]",
+            "location":"[resourceGroup().location]",
             "name":"[parameters('name')]",
             "properties":{
                 "backupPolicy":{
@@ -197,7 +191,7 @@
             "dependsOn":[
                 
             ],
-            "location":"[parameters('location')]",
+            "location":"[resourceGroup().location]",
             "name":"[parameters('name')]",
             "properties":{
                 "addressSpace":{
@@ -253,7 +247,7 @@
                 
             ],
             "kind":"StorageV2",
-            "location":"[parameters('location')]",
+            "location":"[resourceGroup().location]",
             "name":"[parameters('storageAccountName')]",
             "properties":{
                 "accessTier":"Hot",
@@ -312,7 +306,7 @@
             "properties":{
                 "clientAffinityEnabled":false,
                 "name":"[parameters('name')]",
-                "serverFarmId":"[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('name'))]",
+                "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('name'))]",
                 "siteConfig":{
                     "alwaysOn":true,
                     "ipSecurityRestrictions":[
