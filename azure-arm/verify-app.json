@@ -5,7 +5,7 @@
         
     },
     "parameters":{
-        "locationName":{
+        "region":{
             "type":"string"
         },
         "name":{
@@ -13,20 +13,14 @@
         },
         "project":{
             "type":"string"
-        },
-        "storageAccountName":{
-            "type":"string"
-        },
-        "workerSize":{
-            "type":"string"
         }
     },
     "resources":[
         {
-            "apiVersion":"2020-04-01",
+            "apiVersion":"2021-01-15",
             "kind":"GlobalDocumentDB",
             "location":"[resourceGroup().location]",
-            "name":"[parameters('name')]",
+            "name":"[variables('dbAccount')]",
             "properties":{
                 "backupPolicy":{
                     "type":"Periodic",
@@ -35,50 +29,74 @@
                         "backupRetentionIntervalInHours":8
                     }
                 },
-                "capabilities":[
-                    
-                ],
                 "databaseAccountOfferType":"Standard",
-                "dependsOn":[
-                    
-                ],
                 "enableFreeTier":true,
                 "enableMultipleWriteLocations":false,
-                "ipRules":[
-                    
-                ],
                 "isVirtualNetworkFilterEnabled":false,
                 "locations":[
                     {
-                        "id":"[concat(parameters('name'), '-', parameters('location'))]",
+                        "id":"[concat(variables('dbAccount'), '-', parameters('location'))]",
                         "failoverPriority":0,
-                        "locationName":"[parameters('locationName')]"
+                        "isZoneRedundant":false,
+                        "locationName":"[parameters('region')]"
                     }
-                ],
-                "virtualNetworkRules":[
-                    
                 ]
             },
             "tags":{
                 "CosmosAccountType":"Non-Production",
-                "Name":"[parameters('name')]",
+                "Name":"[variables('dbAccount')]",
                 "Project":"[parameters('project')]"
             },
             "type":"Microsoft.DocumentDb/databaseAccounts"
         },
         {
-            "apiVersion":"2020-04-01",
+            "apiVersion":"2021-01-15",
             "dependsOn":[
-                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('name'))]"
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccount'))]"
             ],
-            "name":"[concat(parameters('name'), '/default')]",
-            "properties":{
-                
-            },
+            "name":"[variables('dbNotebook')]",
             "type":"Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces"
         },
         {
-            "apiVersion":"2020-07-01",
+            "apiVersion":"2021-01-15",
+            "dependsOn":[
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccount'))]"
+            ],
+            "name":"[variables('dbName')]",
+            "properties":{
+                "resource":{
+                    "id":"[variables('dbName')]"
+                }
+            },
+            "type":"Microsoft.DocumentDB/databaseAccounts/sqlDatabases"
+        },
+        {
+            "apiVersion":"2021-01-15",
+            "dependsOn":[
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('dbAccount'), variables('dbName'))]"
+            ],
+            "name":"[variables('dbContainer')]",
+            "properties":{
+                "resource":{
+                    "id":"[variables('dbContainer')]",
+                    "defaultTtl":86400,
+                    "partitionKey":{
+                        "kind":"Hash",
+                        "paths":[
+                            "/id"
+                        ]
+                    }
+                },
+                "options":{
+                    "autoscaleSettings":{
+                        "maxThroughput":400
+                    }
+                }
+            },
+            "type":"Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers"
+        },
+        {
+            "apiVersion":"2020-05-01",
             "location":"global",
             "name":"[parameters('name')]",
             "properties":{
@@ -248,7 +266,7 @@
             ],
             "kind":"StorageV2",
             "location":"[resourceGroup().location]",
-            "name":"[parameters('storageAccountName')]",
+            "name":"[replace(parameters('name'),'-', '')]",
             "properties":{
                 "accessTier":"Hot",
                 "allowBlobPublicAccess":false,
@@ -273,17 +291,16 @@
             "type":"Microsoft.Storage/storageAccounts"
         },
         {
-            "apiVersion":"2018-11-01",
+            "apiVersion":"2020-09-01",
             "dependsOn":[
                 
             ],
             "kind":"linux",
-            "location":"[parameters('locationName')]",
+            "location":"[resourceGroup().location]",
             "name":"[parameters('name')]",
             "properties":{
                 "name":"[parameters('name')]",
-                "reserved":true,
-                "workerSize":"[parameters('workerSize')]"
+                "reserved":true
             },
             "sku":{
                 "Tier":"Standard",
@@ -296,12 +313,12 @@
             "type":"Microsoft.Web/serverfarms"
         },
         {
-            "apiVersion":"2018-11-01",
+            "apiVersion":"2020-09-01",
             "dependsOn":[
                 "[concat('Microsoft.Network/VirtualNetworks/', parameters('name'))]",
                 "[concat('Microsoft.Web/serverfarms/', parameters('name'))]"
             ],
-            "location":"[parameters('locationName')]",
+            "location":"[resourceGroup().location]",
             "name":"[parameters('name')]",
             "properties":{
                 "clientAffinityEnabled":false,
@@ -309,13 +326,6 @@
                 "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('name'))]",
                 "siteConfig":{
                     "alwaysOn":true,
-                    "ipSecurityRestrictions":[
-                        {
-                            "action":"Allow",
-                            "priority":"1",
-							"tag": "AzureFrontDoor.Backend"
-                        }
-                    ],
                     "linuxFxVersion":"RUBY|2.6",
                     "numberOfWorkers":"3"
                 },
@@ -343,6 +353,9 @@
         }
     ],
     "variables":{
-        
+        "dbAccount":"[concat(parameters('name'), '/db')]",
+        "dbContainer":"[concat(parameters('name'), '/users')]",
+        "dbName":"[concat(parameters('name'), '/sql')]",
+        "dbNotebook":"[concat(parameters('name'), '/notebook')]"
     }
 }
