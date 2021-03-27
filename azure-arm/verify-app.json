@@ -35,7 +35,7 @@
                 "isVirtualNetworkFilterEnabled":false,
                 "locations":[
                     {
-                        "id":"[concat(variables('dbAccount'), '-', parameters('location'))]",
+                        "id":"[concat(variables('dbAccount'), '-', resourceGroup().location)]",
                         "failoverPriority":0,
                         "isZoneRedundant":false,
                         "locationName":"[parameters('region')]"
@@ -54,15 +54,7 @@
             "dependsOn":[
                 "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccount'))]"
             ],
-            "name":"[variables('dbNotebook')]",
-            "type":"Microsoft.DocumentDB/databaseAccounts/notebookWorkspaces"
-        },
-        {
-            "apiVersion":"2021-01-15",
-            "dependsOn":[
-                "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('dbAccount'))]"
-            ],
-            "name":"[variables('dbName')]",
+            "name":"[concat(variables('dbAccount'), '/', variables('dbName'))]",
             "properties":{
                 "resource":{
                     "id":"[variables('dbName')]"
@@ -75,10 +67,10 @@
             "dependsOn":[
                 "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('dbAccount'), variables('dbName'))]"
             ],
-            "name":"[variables('dbContainer')]",
+            "name":"[concat(variables('dbAccount'), '/', variables('dbName'), '/', variables('tblUsers'))]",
             "properties":{
                 "resource":{
-                    "id":"[variables('dbContainer')]",
+                    "id":"[variables('tblUsers')]",
                     "defaultTtl":86400,
                     "partitionKey":{
                         "kind":"Hash",
@@ -89,7 +81,7 @@
                 },
                 "options":{
                     "autoscaleSettings":{
-                        "maxThroughput":400
+                        "maxThroughput":4000
                     }
                 }
             },
@@ -353,9 +345,8 @@
         }
     ],
     "variables":{
-        "dbAccount":"[concat(parameters('name'), '/db')]",
-        "dbContainer":"[concat(parameters('name'), '/users')]",
-        "dbName":"[concat(parameters('name'), '/sql')]",
-        "dbNotebook":"[concat(parameters('name'), '/notebook')]"
+        "dbAccount":"[concat(parameters('name'), '-db')]",
+        "dbName":"sql",
+		"tblUsers": "users"
     }
 }
