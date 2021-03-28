@@ -14,3 +14,6 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 # TODO: Display DB Information on UI
 
 # TODO: Write Ruby Tests (RSpec? https://rspec.info/)
+
+# Deploy Ruby Code through Azure DevOps
+
