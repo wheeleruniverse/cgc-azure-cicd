@@ -87,10 +87,37 @@
             },
             "type":"Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers"
         },
+		{
+			"apiVersion": "2015-04-01",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', variables('aspName'))]"
+			],
+			"location": "[resourceGroup().location]",
+			"name": "[concat(variables('aspName'),'-scaleout')]",
+			"properties": {
+				"enabled": true,
+				"profiles": [
+					{
+						"capacity": {
+							"default": 3,
+							"maximum": 3,
+							"minimum": 1
+						},
+						"name": "Scale Out"
+					}
+				],
+				"targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', variables('aspName'))]"
+			},
+            "tags":{
+                "Name":"[variables('vnetName')]",
+                "Project":"[parameters('project')]"
+            },
+			"type": "microsoft.insights/autoscalesettings"
+		},
         {
             "apiVersion":"2020-05-01",
             "location":"global",
-            "name":"[parameters('name')]",
+            "name":"[concat(parameters('name'), '-fd')]",
             "properties":{
                 "backendPools":[
                     {
@@ -169,7 +196,7 @@
                         }
                     },
                     {
-                        "name":"routingRule1",
+                        "name":"https",
                         "properties":{
                             "acceptedProtocols":[
                                 "Https"
@@ -198,15 +225,12 @@
         },
         {
             "apiVersion":"2019-09-01",
-            "dependsOn":[
-                
-            ],
             "location":"[resourceGroup().location]",
-            "name":"[parameters('name')]",
+            "name":"[variables('vnetName')]",
             "properties":{
                 "addressSpace":{
                     "addressPrefixes":[
-                        "10.0.0.0/20"
+                        "10.0.0.0/24"
                     ]
                 },
                 "enableDdosProtection":false,
@@ -214,10 +238,10 @@
                     {
                         "name":"public-1",
                         "properties":{
-                            "addressPrefix":"10.0.0.0/24",
+                            "addressPrefix":"10.0.0.0/28",
                             "delegations":[
                                 {
-                                    "name":"delegation",
+                                    "name":"server-delegation",
                                     "properties":{
                                         "serviceName":"Microsoft.Web/serverFarms"
                                     }
@@ -226,27 +250,15 @@
                         }
                     },
                     {
-                        "name":"public-2",
-                        "properties":{
-                            "addressPrefix":"10.0.1.0/24"
-                        }
-                    },
-                    {
                         "name":"private-1",
                         "properties":{
-                            "addressPrefix":"10.0.15.0/24"
-                        }
-                    },
-                    {
-                        "name":"private-2",
-                        "properties":{
-                            "addressPrefix":"10.0.14.0/24"
+                            "addressPrefix":"10.0.0.16/28"
                         }
                     }
                 ]
             },
             "tags":{
-                "Name":"[parameters('name')]",
+                "Name":"[variables('vnetName')]",
                 "Project":"[parameters('project')]"
             },
             "type":"Microsoft.Network/VirtualNetworks"
@@ -258,7 +270,7 @@
             ],
             "kind":"StorageV2",
             "location":"[resourceGroup().location]",
-            "name":"[replace(parameters('name'),'-', '')]",
+            "name":"[variables('saName')]",
             "properties":{
                 "accessTier":"Hot",
                 "allowBlobPublicAccess":false,
@@ -266,10 +278,7 @@
                 "minimumTlsVersion":"TLS1_2",
                 "networkAcls":{
                     "bypass":"AzureServices",
-                    "defaultAction":"Allow",
-                    "ipRules":[
-                        
-                    ]
+                    "defaultAction":"Allow"
                 },
                 "supportsHttpsTrafficOnly":true
             },
@@ -277,29 +286,25 @@
                 "name":"Standard_LRS"
             },
             "tags":{
-                "Name":"[parameters('name')]",
+                "Name":"[variables('saName')]",
                 "Project":"[parameters('project')]"
             },
             "type":"Microsoft.Storage/storageAccounts"
         },
         {
             "apiVersion":"2020-09-01",
-            "dependsOn":[
-                
-            ],
             "kind":"linux",
             "location":"[resourceGroup().location]",
-            "name":"[parameters('name')]",
+            "name":"[variables('aspName')]",
             "properties":{
-                "name":"[parameters('name')]",
+                "name":"[variables('aspName')]",
                 "reserved":true
             },
             "sku":{
-                "Tier":"Standard",
-                "Name":"S1"
+                "name":"S1"
             },
             "tags":{
-                "Name":"[parameters('name')]",
+                "Name":"[variables('aspName')]",
                 "Project":"[parameters('project')]"
             },
             "type":"Microsoft.Web/serverfarms"
@@ -307,46 +312,123 @@
         {
             "apiVersion":"2020-09-01",
             "dependsOn":[
-                "[concat('Microsoft.Network/VirtualNetworks/', parameters('name'))]",
-                "[concat('Microsoft.Web/serverfarms/', parameters('name'))]"
+                "[concat('Microsoft.Network/VirtualNetworks/', variables('vnetName'))]",
+                "[concat('Microsoft.Web/serverfarms/', variables('aspName'))]"
             ],
             "location":"[resourceGroup().location]",
-            "name":"[parameters('name')]",
+            "name":"[variables('appName')]",
             "properties":{
                 "clientAffinityEnabled":false,
-                "name":"[parameters('name')]",
-                "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', parameters('name'))]",
+                "name":"[variables('appName')]",
+                "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', variables('aspName'))]",
                 "siteConfig":{
                     "alwaysOn":true,
-                    "linuxFxVersion":"RUBY|2.6",
-                    "numberOfWorkers":"3"
+                    "ipSecurityRestrictions":[
+                        {
+                            "action":"Allow",
+                            "description":"Allow FrontDoor",
+                            "ipAddress":"AzureFrontDoor.Backend",
+                            "name":"AllowFD",
+                            "priority":1,
+                            "tag":"ServiceTag"
+                        },
+                        {
+                            "action":"Deny",
+                            "description":"Deny All",
+                            "ipAddress":"Any",
+                            "name":"Deny All",
+                            "priority":999
+                        }
+                    ],
+                    "linuxFxVersion":"RUBY|2.6"
                 },
-                "vnetName":"[parameters('name')]"
+                "vnetName":"[variables('vnetName')]"
             },
             "resources":[
                 {
                     "apiVersion":"2019-08-01",
-                    "dependsOn":[
-                        "[resourceId('Microsoft.Web/sites', parameters('name'))]"
-                    ],
-                    "name":"virtualNetwork",
+					"dependsOn":[
+						"[concat('Microsoft.Web/sites/', variables('appName'))]"
+					],
+                    "name":"vnet1",
                     "properties":{
-                        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('name'), 'public-1')]",
+                        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'public-1')]",
                         "swiftSupported":true
                     },
                     "type":"config"
                 }
             ],
             "tags":{
-                "Name":"[parameters('name')]",
+                "Name":"[variables('appName')]",
                 "Project":"[parameters('project')]"
             },
             "type":"Microsoft.Web/sites"
+        },
+        {
+            "apiVersion":"2020-09-01",
+            "dependsOn":[
+                "[concat('Microsoft.Network/VirtualNetworks/', variables('vnetName'))]",
+                "[concat('Microsoft.Web/serverfarms/', variables('aspName'))]",
+                "[concat('Microsoft.Web/sites/', variables('appName'))]"
+            ],
+            "location":"[resourceGroup().location]",
+            "name":"[variables('appStgName')]",
+            "properties":{
+                "clientAffinityEnabled":false,
+                "name":"[variables('appStgName')]",
+                "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', variables('aspName'))]",
+                "siteConfig":{
+                    "alwaysOn":true,
+                    "ipSecurityRestrictions":[
+                        {
+                            "action":"Allow",
+                            "description":"Allow FrontDoor",
+                            "ipAddress":"AzureFrontDoor.Backend",
+                            "name":"AllowFD",
+                            "priority":1,
+                            "tag":"ServiceTag"
+                        },
+                        {
+                            "action":"Deny",
+                            "description":"Deny All",
+                            "ipAddress":"Any",
+                            "name":"Deny All",
+                            "priority":999
+                        }
+                    ],
+                    "linuxFxVersion":"RUBY|2.6"
+                },
+                "vnetName":"[variables('vnetName')]"
+            },
+            "resources":[
+                {
+                    "apiVersion":"2019-08-01",
+					"dependsOn":[
+						"[concat('Microsoft.Web/sites/', variables('appName'), '/slots/stg')]"
+					],
+                    "name":"vnet2",
+                    "properties":{
+                        "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'public-1')]",
+                        "swiftSupported":true
+                    },
+                    "type":"config"
+                }
+            ],
+            "tags":{
+                "Name":"[variables('appStgName')]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.Web/sites/slots"
         }
     ],
     "variables":{
+        "appName":"[concat(parameters('name'), '-site')]",
+        "appStgName":"[concat(parameters('name'), '-site/stg')]",
+        "aspName":"[concat(parameters('name'), '-asp')]",
         "dbAccount":"[concat(parameters('name'), '-db')]",
         "dbName":"sql",
-		"tblUsers": "users"
+        "saName":"[replace(parameters('name'),'-', '')]",
+        "tblUsers":"users",
+        "vnetName":"[concat(parameters('name'), '-vnet')]"
     }
 }
