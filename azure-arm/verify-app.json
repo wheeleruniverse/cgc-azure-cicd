@@ -93,9 +93,8 @@
                 "[resourceId('Microsoft.Web/serverfarms', variables('aspName'))]"
             ],
             "location":"[resourceGroup().location]",
-            "name":"[concat(variables('aspName'),'-scaleout')]",
+            "name":"[concat(variables('aspName'),'-scaling')]",
             "properties":{
-                "enabled":true,
                 "profiles":[
                     {
                         "capacity":{
@@ -103,7 +102,47 @@
                             "maximum":3,
                             "minimum":1
                         },
-                        "name":"Scale Out"
+                        "name":"AutoScaling",
+                        "rules":[
+                            {
+                                "metricTrigger":{
+                                    "metricName":"CpuPercentage",
+                                    "metricNamespace":"",
+                                    "metricResourceUri":"[resourceId('Microsoft.Web/serverFarms/', variables('aspName'))]",
+                                    "operator":"GreaterThan",
+                                    "statistic":"Average",
+                                    "threshold":70,
+                                    "timeAggregation":"Average",
+                                    "timeGrain":"PT5M",
+                                    "timeWindow":"PT10M"
+                                },
+                                "scaleAction":{
+                                    "cooldown":"PT10M",
+                                    "direction":"Increase",
+                                    "type":"ChangeCount",
+                                    "value":1
+                                }
+                            },
+                            {
+                                "metricTrigger":{
+                                    "metricName":"CpuPercentage",
+                                    "metricNamespace":"",
+                                    "metricResourceUri":"[resourceId('Microsoft.Web/serverFarms/', variables('aspName'))]",
+                                    "operator":"LessThan",
+                                    "statistic":"Average",
+                                    "threshold":30,
+                                    "timeAggregation":"Average",
+                                    "timeGrain":"PT5M",
+                                    "timeWindow":"PT10M"
+                                },
+                                "scaleAction":{
+                                    "cooldown":"PT2M",
+                                    "direction":"Decrease",
+                                    "type":"ChangeCount",
+                                    "value":1
+                                }
+                            }
+                        ]
                     }
                 ],
                 "targetResourceUri":"[resourceId('Microsoft.Web/serverfarms', variables('aspName'))]"
@@ -112,12 +151,12 @@
                 "Name":"[variables('vnetName')]",
                 "Project":"[parameters('project')]"
             },
-            "type":"microsoft.insights/autoscalesettings"
+            "type":"Microsoft.Insights/autoscalesettings"
         },
         {
             "apiVersion":"2020-05-01",
             "location":"global",
-            "name":"[concat(parameters('name'), '-fd')]",
+            "name":"[variables('fdName')]",
             "properties":{
                 "backendPools":[
                     {
@@ -125,8 +164,8 @@
                         "properties":{
                             "backends":[
                                 {
-                                    "address":"[concat(parameters('name'), '.azurewebsites.net')]",
-                                    "backendHostHeader":"[concat(parameters('name'), '.azurewebsites.net')]",
+                                    "address":"[concat(variables('fdName'), '.azurewebsites.net')]",
+                                    "backendHostHeader":"[concat(variables('fdName'), '.azurewebsites.net')]",
                                     "enabledState":"Enabled",
                                     "httpPort":80,
                                     "httpsPort":443,
@@ -135,10 +174,10 @@
                                 }
                             ],
                             "healthProbeSettings":{
-                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('name'), 'healthcheck')]"
+                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', variables('fdName'), 'healthcheck')]"
                             },
                             "loadBalancingSettings":{
-                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('name'), 'loadbalancing')]"
+                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', variables('fdName'), 'loadbalancing')]"
                             }
                         }
                     }
@@ -148,7 +187,7 @@
                     {
                         "name":"frontend",
                         "properties":{
-                            "hostName":"[concat(parameters('name'), '.azurefd.net')]",
+                            "hostName":"[concat(variables('fdName'), '.azurefd.net')]",
                             "sessionAffinityEnabledState":"Disabled"
                         }
                     }
@@ -182,7 +221,7 @@
                             "enabledState":"Enabled",
                             "frontendEndpoints":[
                                 {
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('name'), 'frontend')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'frontend')]"
                                 }
                             ],
                             "patternsToMatch":[
@@ -204,7 +243,7 @@
                             "enabledState":"Enabled",
                             "frontendEndpoints":[
                                 {
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', parameters('name'), 'frontend')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'frontend')]"
                                 }
                             ],
                             "patternsToMatch":[
@@ -213,13 +252,17 @@
                             "routeConfiguration":{
                                 "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
                                 "backendPool":{
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', parameters('name'), 'backend')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', variables('fdName'), 'backend')]"
                                 },
                                 "forwardingProtocol":"MatchRequest"
                             }
                         }
                     }
                 ]
+            },
+            "tags":{
+                "Name":"[variables('fdName')]",
+                "Project":"[parameters('project')]"
             },
             "type":"Microsoft.Network/frontDoors"
         },
@@ -265,9 +308,6 @@
         },
         {
             "apiVersion":"2019-06-01",
-            "dependsOn":[
-                
-            ],
             "kind":"StorageV2",
             "location":"[resourceGroup().location]",
             "name":"[variables('saName')]",
@@ -282,6 +322,16 @@
                 },
                 "supportsHttpsTrafficOnly":true
             },
+            "resources":[
+                {
+                    "apiVersion":"2019-06-01",
+                    "dependsOn":[
+                        "[variables('saName')]"
+                    ],
+                    "name":"default/blob",
+                    "type":"blobServices/containers"
+                }
+            ],
             "sku":{
                 "name":"Standard_LRS"
             },
@@ -319,10 +369,8 @@
             "name":"[variables('appName')]",
             "properties":{
                 "clientAffinityEnabled":false,
-                "name":"[variables('appName')]",
                 "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', variables('aspName'))]",
                 "siteConfig":{
-                    "alwaysOn":true,
                     "ipSecurityRestrictions":[
                         {
                             "action":"Allow",
@@ -341,8 +389,7 @@
                         }
                     ],
                     "linuxFxVersion":"RUBY|2.6"
-                },
-                "vnetName":"[variables('vnetName')]"
+                }
             },
             "resources":[
                 {
@@ -350,7 +397,7 @@
                     "dependsOn":[
                         "[concat('Microsoft.Web/sites/', variables('appName'))]"
                     ],
-                    "name":"vnet1",
+                    "name":"virtualNetwork",
                     "properties":{
                         "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'public-1')]",
                         "swiftSupported":true
@@ -367,38 +414,16 @@
         {
             "apiVersion":"2020-09-01",
             "dependsOn":[
-                "[concat('Microsoft.Network/VirtualNetworks/', variables('vnetName'))]",
-                "[concat('Microsoft.Web/serverfarms/', variables('aspName'))]",
                 "[concat('Microsoft.Web/sites/', variables('appName'))]"
             ],
             "location":"[resourceGroup().location]",
             "name":"[variables('appStgName')]",
             "properties":{
                 "clientAffinityEnabled":false,
-                "name":"[variables('appStgName')]",
                 "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', variables('aspName'))]",
                 "siteConfig":{
-                    "alwaysOn":true,
-                    "ipSecurityRestrictions":[
-                        {
-                            "action":"Allow",
-                            "description":"Allow FrontDoor",
-                            "ipAddress":"AzureFrontDoor.Backend",
-                            "name":"AllowFD",
-                            "priority":1,
-                            "tag":"ServiceTag"
-                        },
-                        {
-                            "action":"Deny",
-                            "description":"Deny All",
-                            "ipAddress":"Any",
-                            "name":"Deny All",
-                            "priority":999
-                        }
-                    ],
                     "linuxFxVersion":"RUBY|2.6"
-                },
-                "vnetName":"[variables('vnetName')]"
+                }
             },
             "resources":[
                 {
@@ -406,7 +431,7 @@
                     "dependsOn":[
                         "[concat('Microsoft.Web/sites/', variables('appName'), '/slots/stg')]"
                     ],
-                    "name":"vnet2",
+                    "name":"virtualNetwork",
                     "properties":{
                         "subnetResourceId":"[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'public-1')]",
                         "swiftSupported":true
@@ -427,6 +452,7 @@
         "aspName":"[concat(parameters('name'), '-asp')]",
         "dbAccount":"[concat(parameters('name'), '-db')]",
         "dbName":"sql",
+        "fdName":"[concat(parameters('name'), '-fd')]",
         "saName":"[replace(parameters('name'),'-', '')]",
         "tblUsers":"users",
         "vnetName":"[concat(parameters('name'), '-vnet')]"
