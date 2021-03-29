@@ -32,9 +32,9 @@
                 "isVirtualNetworkFilterEnabled":false,
                 "locations":[
                     {
-                        "id":"[concat(variables('dbAccount'), '-', resourceGroup().location)]",
+                        "id":"[concat(variables('dbAccount'), '-', parameters('region'))]",
                         "failoverPriority":0,
-                        "isZoneRedundant":false,
+                        "isZoneRedundant":true,
                         "locationName":"[parameters('region')]"
                     }
                 ]
