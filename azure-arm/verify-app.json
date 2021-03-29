@@ -504,6 +504,23 @@
                 "clientAffinityEnabled":false,
                 "serverFarmId":"[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', parameters('project'), '/providers/Microsoft.Web/serverfarms/', variables('aspName'))]",
                 "siteConfig":{
+                    "ipSecurityRestrictions":[
+                        {
+                            "action":"Allow",
+                            "description":"Allow FrontDoor",
+                            "ipAddress":"AzureFrontDoor.Backend",
+                            "name":"AllowFD",
+                            "priority":1,
+                            "tag":"ServiceTag"
+                        },
+                        {
+                            "action":"Deny",
+                            "description":"Deny All",
+                            "ipAddress":"Any",
+                            "name":"Deny All",
+                            "priority":999
+                        }
+                    ],
                     "linuxFxVersion":"RUBY|2.6"
                 }
             },
