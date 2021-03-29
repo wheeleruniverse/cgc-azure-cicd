@@ -1,9 +1,6 @@
 {
     "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion":"1.0.0.0",
-    "outputs":{
-        
-    },
     "parameters":{
         "region":{
             "type":"string"
@@ -95,10 +92,20 @@
             "location":"[resourceGroup().location]",
             "name":"[concat(variables('aspName'),'-scaling')]",
             "properties":{
+                "enabled":true,
+                "notifications":[
+                    {
+                        "email":{
+                            "sendToSubscriptionAdministrator":true,
+                            "sendToSubscriptionCoAdministrators":true
+                        },
+                        "operation":"Scale"
+                    }
+                ],
                 "profiles":[
                     {
                         "capacity":{
-                            "default":3,
+                            "default":1,
                             "maximum":3,
                             "minimum":1
                         },
@@ -160,24 +167,46 @@
             "properties":{
                 "backendPools":[
                     {
-                        "name":"backend",
+                        "name":"PrdBackend",
                         "properties":{
                             "backends":[
                                 {
-                                    "address":"[concat(variables('fdName'), '.azurewebsites.net')]",
-                                    "backendHostHeader":"[concat(variables('fdName'), '.azurewebsites.net')]",
+                                    "address":"[concat(variables('appName'), '.azurewebsites.net')]",
+                                    "backendHostHeader":"[concat(variables('appName'), '.azurewebsites.net')]",
                                     "enabledState":"Enabled",
                                     "httpPort":80,
                                     "httpsPort":443,
                                     "priority":1,
-                                    "weight":50
+                                    "weight":100
                                 }
                             ],
                             "healthProbeSettings":{
-                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', variables('fdName'), 'healthcheck')]"
+                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', variables('fdName'), 'HealthProbe')]"
                             },
                             "loadBalancingSettings":{
-                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', variables('fdName'), 'loadbalancing')]"
+                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', variables('fdName'), 'LoadBalancing')]"
+                            }
+                        }
+                    },
+                    {
+                        "name":"StgBackend",
+                        "properties":{
+                            "backends":[
+                                {
+                                    "address":"[concat(variables('appName'), '.azurewebsites.net')]",
+                                    "backendHostHeader":"[concat(variables('appName'), '-stg.azurewebsites.net')]",
+                                    "enabledState":"Enabled",
+                                    "httpPort":80,
+                                    "httpsPort":443,
+                                    "priority":1,
+                                    "weight":100
+                                }
+                            ],
+                            "healthProbeSettings":{
+                                "id":"[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', variables('fdName'), 'HealthProbe')]"
+                            },
+                            "loadBalancingSettings":{
+                                "id":"[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', variables('fdName'), 'LoadBalancing')]"
                             }
                         }
                     }
@@ -185,16 +214,23 @@
                 "enabledState":"Enabled",
                 "frontendEndpoints":[
                     {
-                        "name":"frontend",
+                        "name":"PrdFrontend",
                         "properties":{
-                            "hostName":"[concat(variables('fdName'), '.azurefd.net')]",
+                            "hostName":"[concat(parameters('name'), '.azurefd.net')]",
+                            "sessionAffinityEnabledState":"Disabled"
+                        }
+                    },
+                    {
+                        "name":"StgFrontend",
+                        "properties":{
+                            "hostName":"[concat(parameters('name'), '.stg.azurefd.net')]",
                             "sessionAffinityEnabledState":"Disabled"
                         }
                     }
                 ],
                 "healthProbeSettings":[
                     {
-                        "name":"healthcheck",
+                        "name":"HealthProbe",
                         "properties":{
                             "intervalInSeconds":120,
                             "path":"/",
@@ -204,7 +240,7 @@
                 ],
                 "loadBalancingSettings":[
                     {
-                        "name":"loadbalancing",
+                        "name":"LoadBalancing",
                         "properties":{
                             "sampleSize":4,
                             "successfulSamplesRequired":2
@@ -213,7 +249,7 @@
                 ],
                 "routingRules":[
                     {
-                        "name":"http",
+                        "name":"PrdHttp",
                         "properties":{
                             "acceptedProtocols":[
                                 "Http"
@@ -221,7 +257,7 @@
                             "enabledState":"Enabled",
                             "frontendEndpoints":[
                                 {
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'frontend')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'PrdFrontend')]"
                                 }
                             ],
                             "patternsToMatch":[
@@ -235,7 +271,7 @@
                         }
                     },
                     {
-                        "name":"https",
+                        "name":"PrdHttps",
                         "properties":{
                             "acceptedProtocols":[
                                 "Https"
@@ -243,7 +279,7 @@
                             "enabledState":"Enabled",
                             "frontendEndpoints":[
                                 {
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'frontend')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'PrdFrontend')]"
                                 }
                             ],
                             "patternsToMatch":[
@@ -252,7 +288,53 @@
                             "routeConfiguration":{
                                 "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
                                 "backendPool":{
-                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', variables('fdName'), 'backend')]"
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', variables('fdName'), 'PrdBackend')]"
+                                },
+                                "forwardingProtocol":"MatchRequest"
+                            }
+                        }
+                    },
+                    {
+                        "name":"StgHttp",
+                        "properties":{
+                            "acceptedProtocols":[
+                                "Http"
+                            ],
+                            "enabledState":"Enabled",
+                            "frontendEndpoints":[
+                                {
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'StgFrontend')]"
+                                }
+                            ],
+                            "patternsToMatch":[
+                                "/*"
+                            ],
+                            "routeConfiguration":{
+                                "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorRedirectConfiguration",
+                                "redirectProtocol":"HttpsOnly",
+                                "redirectType":"Moved"
+                            }
+                        }
+                    },
+                    {
+                        "name":"StgHttps",
+                        "properties":{
+                            "acceptedProtocols":[
+                                "Https"
+                            ],
+                            "enabledState":"Enabled",
+                            "frontendEndpoints":[
+                                {
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/frontendEndpoints', variables('fdName'), 'StgFrontend')]"
+                                }
+                            ],
+                            "patternsToMatch":[
+                                "/*"
+                            ],
+                            "routeConfiguration":{
+                                "@odata.type":"#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
+                                "backendPool":{
+                                    "id":"[resourceId('Microsoft.Network/frontDoors/backendPools', variables('fdName'), 'StgBackend')]"
                                 },
                                 "forwardingProtocol":"MatchRequest"
                             }
