@@ -27,7 +27,7 @@ steps:
   
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: '<Azure service connection>'
-    appName: '<name of web app>'
-    slotName: staging
+    azureSubscription: 'bffe7b68-d4fe-4573-a3be-63d2c36f49b5'
+    appName: 'wheeler-verify-app-site'
+    slotName: 'stg'
   
