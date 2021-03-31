@@ -10,24 +10,27 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+
+- script: cd verify-app
+  displayName: 'cd verify-app'
+
 - task: UseRubyVersion@0
   inputs:
     versionSpec: '>= 2.5'
     
-- displayName: 'gem install rails'
-  script: gem install rails && rails -v
-  
-- displayName: 'bundle install'
-  script: |
+- script: gem install rails && rails -v
+  displayName: 'gem install rails'
+
+- script: |
     gem install bundler
     bundle install --retry=3 --jobs=4
-  
-- displayName: 'bundle exec rake'
-  script: bundle exec rake
-  
+  displayName: 'bundle install'
+
+- script: bundle exec rake
+  displayName: 'bundle exec rake'
+
 - task: AzureWebApp@1
   inputs:
     azureSubscription: 'bffe7b68-d4fe-4573-a3be-63d2c36f49b5'
     appName: 'wheeler-verify-app-site'
     slotName: 'stg'
-  
