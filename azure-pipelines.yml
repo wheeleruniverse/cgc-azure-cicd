@@ -9,26 +9,28 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+- name: appDir
+  value: verify-app
+
 steps:
 - task: UseRubyVersion@0
   inputs:
     versionSpec: '2.7'
-    
-#- script: |
-#    gem install rails
-#    rails -v
-#  displayName: 'gem install rails'
-#  workingDirectory: verify-app
 
 - script: |
     gem install bundler
     bundle install --retry=3 --jobs=4
   displayName: 'bundle install'
-  workingDirectory: verify-app
+  workingDirectory: $(appDir)
+
+- script: rails db:migrate RAILS_ENV=test
+  displayName: 'rails db:migrate'
+  workingDirectory: $(appDir)
 
 - script: bundle exec rake
   displayName: 'bundle exec rake'
-  workingDirectory: verify-app
+  workingDirectory: $(appDir)
 
 - task: AzureWebApp@1
   inputs:
