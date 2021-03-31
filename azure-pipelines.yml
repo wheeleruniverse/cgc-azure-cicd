@@ -14,11 +14,11 @@ steps:
   inputs:
     versionSpec: '2.7'
     
-- script: |
-    gem install rails
-    rails -v
-  displayName: 'gem install rails'
-  workingDirectory: verify-app
+#- script: |
+#    gem install rails
+#    rails -v
+#  displayName: 'gem install rails'
+#  workingDirectory: verify-app
 
 - script: |
     gem install bundler
