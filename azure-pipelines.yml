@@ -36,4 +36,6 @@ steps:
   inputs:
     azureSubscription: 'WheelerLearning/wheeler146'
     appName: 'wheeler-verify-app-site'
+    deploymentMethod: 'zipDeploy'
+    package: $(System.DefaultWorkingDirectory)/$(appDir)
     slotName: 'stg'
