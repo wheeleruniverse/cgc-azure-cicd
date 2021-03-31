@@ -594,7 +594,7 @@
         "dbAccount":"[concat(parameters('name'), '-db')]",
         "dbName":"sql",
         "fdPrd":"[parameters('name')]",
-        "fdStg":"[concat(parameters('name'), -stg')]",
+        "fdStg":"[concat(parameters('name'), '-stg')]",
         "saName":"[replace(parameters('name'),'-', '')]",
         "tblUsers":"users",
         "vnetName":"[concat(parameters('name'), '-vnet')]"
