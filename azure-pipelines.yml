@@ -31,6 +31,6 @@ steps:
 
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'bffe7b68-d4fe-4573-a3be-63d2c36f49b5'
+    azureSubscription: 'WheelerLearning/wheeler146'
     appName: 'wheeler-verify-app-site'
     slotName: 'stg'
