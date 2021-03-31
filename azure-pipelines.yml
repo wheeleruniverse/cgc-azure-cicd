@@ -13,11 +13,21 @@ steps:
 - task: UseRubyVersion@0
   inputs:
     versionSpec: '>= 2.5'
-
-- script: |
+    
+- displayName: 'gem install rails'
+  script: gem install rails && rails -v
+  
+- displayName: 'bundle install'
+  script: |
     gem install bundler
     bundle install --retry=3 --jobs=4
-  displayName: 'bundle install'
-
-- script: bundle exec rake
-  displayName: 'bundle exec rake'
+  
+- displayName: 'bundle exec rake'
+  script: bundle exec rake
+  
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: '<Azure service connection>'
+    appName: '<name of web app>'
+    slotName: staging
+  
