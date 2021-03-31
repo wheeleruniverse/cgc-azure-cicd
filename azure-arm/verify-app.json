@@ -286,8 +286,8 @@
                         "properties":{
                             "backends":[
                                 {
-                                    "address":"[concat(parameters('name'), '-stg.azurewebsites.net')]",
-                                    "backendHostHeader":"[concat(parameters('name'), '-stg.azurewebsites.net')]",
+                                    "address":"[concat(parameters('name'), '-site-stg.azurewebsites.net')]",
+                                    "backendHostHeader":"[concat(parameters('name'), '-site-stg.azurewebsites.net')]",
                                     "enabledState":"Enabled",
                                     "httpPort":80,
                                     "httpsPort":443,
@@ -309,7 +309,7 @@
                     {
                         "name":"StgFrontend",
                         "properties":{
-                            "hostName":"[concat(variables('fdStg'), '.stg.azurefd.net')]",
+                            "hostName":"[concat(variables('fdStg'), '.azurefd.net')]",
                             "resourceState":"Enabled",
                             "sessionAffinityEnabledState":"Disabled"
                         }
