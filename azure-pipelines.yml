@@ -7,7 +7,9 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  name: Default
+  demands:
+    - agent.name -equals wheeler-verify-app-agent
 
 variables:
 - name: appDir
@@ -16,7 +18,7 @@ variables:
 steps:
 - task: UseRubyVersion@0
   inputs:
-    versionSpec: '2.6'
+    versionSpec: '2.6.2'
 
 - script: |
     gem install bundler

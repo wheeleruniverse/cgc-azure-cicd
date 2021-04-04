@@ -156,9 +156,9 @@
 		}
     ],
     "variables":{
-        "ipName":"[concat(parameters('name'), '-agent-ip']",
-        "nicName":"[concat(parameters('name'), '-agent-nic']",
-        "nsgName":"[concat(parameters('name'), '-nsg']",
-        "vmName":"[concat(parameters('name'), '-agent']"
+        "ipName":"[concat(parameters('name'), '-agent-ip')]",
+        "nicName":"[concat(parameters('name'), '-agent-nic')]",
+        "nsgName":"[concat(parameters('name'), '-nsg')]",
+        "vmName":"[concat(parameters('name'), '-agent')]"
     }
 }
