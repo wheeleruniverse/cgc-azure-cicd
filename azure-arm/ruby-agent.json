@@ -1,0 +1,164 @@
+{
+    "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion":"1.0.0.0",
+    "outputs":{
+        "hostname":{
+            "type":"string",
+            "value":"[reference(variables('ipName')).dnsSettings.fqdn]"
+        },
+        "sshCommand":{
+            "type":"string",
+            "value":"[concat('ssh ', parameters('adminUsername'), '@', reference(variables('ipName')).dnsSettings.fqdn)]"
+        }
+    },
+    "parameters":{
+        "adminPassword":{
+            "type":"securestring",
+            "metadata":{
+                "description":"vm password"
+            }
+        },
+        "adminUsername":{
+            "type":"string",
+            "metadata":{
+                "description":"vm username"
+            }
+        },
+        "name":{
+            "type":"string",
+            "metadata":{
+                "description":"name prefix"
+            }
+        },
+        "subnetName":{
+            "type":"string",
+            "metadata":{
+                "description":"name of the vnet subnet"
+            }
+        },
+        "vnetName":{
+            "type":"string",
+            "metadata":{
+                "description":"name of the vnet"
+            }
+        }
+    },
+    "resources":[
+        {
+			"apiVersion": "2020-06-01",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]",
+				"[resourceId('Microsoft.Network/publicIpAddresses/', variables('ipName'))]"
+			],
+			"location": "[resourceGroup().location]",
+			"name": "[variables('nicName')]",
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "ip-config",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIpAddress": {
+								"id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ipName'))]"
+							},
+							"subnet": {
+								"id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+							}
+						}
+					}
+				],
+				"networkSecurityGroup": {
+					"id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('nsgName'))]"
+				}
+			},
+			"type": "Microsoft.Network/networkInterfaces"
+		},
+        {
+			"apiVersion": "2020-06-01",
+			"location": "[resourceGroup().location]",
+			"name": "[variables('nsgName')]",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "SSH",
+						"properties": {
+							"access": "Allow",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "22",
+							"direction": "Inbound",
+							"priority": 1000,
+							"protocol": "TCP",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*"
+						}
+					}
+				]
+			},
+			"type": "Microsoft.Network/networkSecurityGroups"
+		},
+        {
+			"apiVersion": "2020-06-01",
+			"location": "[resourceGroup().location]",
+			"name": "[variables('ipName')]",
+			"properties": {
+				"dnsSettings": {
+					"domainNameLabel": "[variables('vmName')]"
+				},
+				"idleTimeoutInMinutes": 4,
+				"publicIPAddressVersion": "IPv4",
+				"publicIpAllocationMethod": "Dynamic"
+			},
+			"sku": {
+				"name": "Basic",
+				"tier": "Regional"
+			},
+			"type": "Microsoft.Network/publicIpAddresses"
+		},
+        {
+			"apiVersion": "2020-06-01",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+			],
+			"location": "[resourceGroup().location]",
+			"name": "[variables('vmName')]",
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_B2s"
+				},
+				"networkProfile": {
+					"networkInterfaces": [
+						{
+							"id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+						}
+					]
+				},
+				"osProfile": {
+					"adminPassword": "[parameters('adminPassword')]",
+					"adminUsername": "[parameters('adminUsername')]",
+					"computerName": "[variables('vmName')]"
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "Canonical",
+						"offer": "UbuntuServer",
+						"sku": "18.04-LTS",
+						"version": "latest"
+					},
+					"osDisk": {
+						"createOption": "fromImage",
+						"managedDisk": {
+							"storageAccountType": "Standard_LRS"
+						}
+					}
+				}
+			},
+			"type": "Microsoft.Compute/virtualMachines"
+		}
+    ],
+    "variables":{
+        "ipName":"[concat(parameters('name'), '-agent-ip']",
+        "nicName":"[concat(parameters('name'), '-agent-nic']",
+        "nsgName":"[concat(parameters('name'), '-nsg']",
+        "vmName":"[concat(parameters('name'), '-agent']"
+    }
+}

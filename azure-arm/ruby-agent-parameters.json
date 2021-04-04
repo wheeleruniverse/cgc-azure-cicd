@@ -1,0 +1,21 @@
+{
+    "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters":{
+        "adminPassword":{
+            "value":"Wl88emLToBBoJJXu"
+        },
+        "adminUsername":{
+            "value":"wheeler146"
+        },
+        "name":{
+            "value":"wheeler-verify-app"
+        },
+        "subnetName":{
+            "value":"private-1"
+        },
+        "vnetName":{
+            "value":"wheeler-verify-app-vnet"
+        }
+    }
+}
