@@ -57,24 +57,21 @@
                     "id":"[variables('dbName')]"
                 }
             },
-            "type":"Microsoft.DocumentDB/databaseAccounts/sqlDatabases"
+            "tags":{
+                "Name":"[concat(variables('dbAccount'), '/', variables('dbName'))]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.DocumentDB/databaseAccounts/mongodbDatabases"
         },
         {
             "apiVersion":"2021-01-15",
             "dependsOn":[
-                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('dbAccount'), variables('dbName'))]"
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/mongodbDatabases', variables('dbAccount'), variables('dbName'))]"
             ],
             "name":"[concat(variables('dbAccount'), '/', variables('dbName'), '/', variables('tblUsers'))]",
             "properties":{
                 "resource":{
-                    "id":"[variables('tblUsers')]",
-                    "defaultTtl":86400,
-                    "partitionKey":{
-                        "kind":"Hash",
-                        "paths":[
-                            "/id"
-                        ]
-                    }
+                    "id":"[variables('tblUsers')]"
                 },
                 "options":{
                     "autoscaleSettings":{
@@ -82,7 +79,11 @@
                     }
                 }
             },
-            "type":"Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers"
+            "tags":{
+                "Name":"[concat(variables('dbAccount'), '/', variables('dbName'), '/', variables('tblUsers'))]",
+                "Project":"[parameters('project')]"
+            },
+            "type":"Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections"
         },
         {
             "apiVersion":"2015-04-01",
@@ -591,8 +592,8 @@
         "appName":"[concat(parameters('name'), '-site')]",
         "appStgName":"[concat(parameters('name'), '-site/stg')]",
         "aspName":"[concat(parameters('name'), '-asp')]",
-        "dbAccount":"[concat(parameters('name'), '-db')]",
-        "dbName":"sql",
+        "dbAccount":"[concat(parameters('name'), '-mongo-db')]",
+        "dbName":"main",
         "fdPrd":"[parameters('name')]",
         "fdStg":"[concat(parameters('name'), '-stg')]",
         "saName":"[replace(parameters('name'),'-', '')]",

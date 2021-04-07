@@ -1,3 +1,25 @@
 // Place all the styles related to the users controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+
+h3 {
+  text-align: center;
+}
+
+#canvas {
+  display: none;
+}
+
+#content {
+  font-size: 1em;
+  margin-left: 3em;
+  margin-top: 1em;
+  text-align: center;
+}
+
+#video {
+  border: 1px solid black;
+  box-shadow: 2px 2px 3px black;
+  height: 480px;
+  width: 640px;
+}
