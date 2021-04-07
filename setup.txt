@@ -1,0 +1,24 @@
+
+	1. Configure WSL (Version 1)
+	
+	2. Install Ubunto 20.04 LTS
+	
+	3. Install rvm
+	
+	4. Install and Use Ruby 2.6.2
+	
+	5. Create and Use gemset 
+	
+	6. Install Rails
+	
+	7. rails new app --skip-bundle --skip-active-record --skip-test --skip-system-test
+	
+	8. Update GemFile for mongoid, rspec
+	
+	9. Bundle Install
+	
+	10. rails g mongoid:config
+	
+	11. rails g rspec:install
+	
+	12. rails webpacker:install 
