@@ -1,19 +1,78 @@
-# CloudGuruChallenge_2102
+# CloudGuruChallenge_21.02
 https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-integrated-global-azure-web-app
 
-# TODO: Simple UI (Rails? https://rubyonrails.org/)
 
-# TODO: Capture User's Name, Address, Photo, and Voice Sample
+## Architecture
 
-# TODO: Write User's Name and Address to Cosmo's DB
+### Backend
+* Azure App Service: https://azure.microsoft.com/en-us/services/app-service/
 
-# TODO: Write User's Photo and Voice Sample to Azure Blob Storage
+### Database
+* Azure Cosmos DB (MongoDB API): https://azure.microsoft.com/en-us/services/cosmos-db/
 
-# TODO: Write User's Photo and Voice Sample Blob Storage URLs to Cosmo's DB
+### DevOps
+* Azure Pipelines: https://azure.microsoft.com/en-us/services/devops/pipelines/
+* Azure Resource Manager: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview
+* Azure Self-Hosted Agent (VM): https://azure.microsoft.com/en-us/services/virtual-machines/
 
-# TODO: Display DB Information on UI
+### Frontend
+* Azure Frontdoor: https://azure.microsoft.com/en-us/services/frontdoor/
 
-# TODO: Write Ruby Tests (RSpec? https://rspec.info/)
+### Networking
+* Azure Virtual Network: https://azure.microsoft.com/en-us/services/virtual-network/
 
-# Deploy Ruby Code through Azure DevOps
 
+## Local Setup
+
+### MongoDB (Windows 10 Home)
+
+01. Install MongoDB: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+
+02. Run MongoDB: 
+
+	```cmd
+	:: run as administrator
+	"C:\Program Files\MongoDB\Server\4.4\bin\mongo.exe"
+	```
+	
+### Ruby on Rails (Windows 10 Home)
+
+01. Configure Windows Subsystem for Linux (WSL): https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+02. Install Ubuntu 20.04 LTS: https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71?rtc=1&activetab=pivot:overviewtab 
+
+### Ruby on Rails (Ubuntu 20.04 LTS WSL)
+
+01. Install Ruby Version Manager (rvm): https://github.com/rvm/ubuntu_rvm
+
+02. Install Ruby
+
+	```bash
+	rvm install 2.6.2
+	rvm use 2.6.2
+	```
+	
+03. Create Gemset
+
+	```bash
+	rvm create gemset verify-app
+	rvm use gemset verify-app
+	```
+	
+04. Install Rails
+	
+	```bash
+	gem install rails
+	```
+
+05. Install Bundle
+
+	```bash
+	bundle install
+	```
+	
+06. Install Webpack
+
+	```bash
+	rails webpacker:install
+	```
