@@ -5,15 +5,11 @@
 <table>
   <thead>
     <tr>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Address line1</th>
-      <th>Address line2</th>
+      <th>Name</th>
+      <th>Address</th>
       <th>City</th>
       <th>State</th>
       <th>Zip</th>
-      <th>Photo url</th>
-      <th>Voice url</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -21,15 +17,11 @@
   <tbody>
     <% @users.each do |user| %>
       <tr>
-        <td><%= user.first_name %></td>
-        <td><%= user.last_name %></td>
-        <td><%= user.address_line1 %></td>
-        <td><%= user.address_line2 %></td>
+        <td><%= "#{user.last_name}, #{user.first_name}" %></td>
+        <td><%= "#{user.address_line1} #{user.address_line2}" %></td>
         <td><%= user.city %></td>
         <td><%= user.state %></td>
         <td><%= user.zip %></td>
-        <td><%= user.photo_url %></td>
-        <td><%= user.voice_url %></td>
         <td><%= link_to 'Show', user %></td>
         <td><%= link_to 'Edit', edit_user_path(user) %></td>
         <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>

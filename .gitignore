@@ -19,6 +19,12 @@
 # ignore node_modules
 /app/node_modules
 
+# ignore public/packs 
+/app/public/packs/*
+
+# ignore public/packs-test
+/app/public/packs-test/*
+
 # ignore tmp (keep directory)
 /app/tmp/*
 !/app/tmp/.keep

@@ -38,22 +38,12 @@
 
   <div class="field">
     <%= form.label :state %>
-    <%= form.text_field :state %>
+    <%= form.select :state, User::STATES.collect {|s| [s["name"], s["abbr"]]}, {:include_blank => true} %>
   </div>
 
   <div class="field">
     <%= form.label :zip %>
     <%= form.text_field :zip %>
-  </div>
-
-  <div class="field">
-    <%= form.label :photo_url %>
-    <%= form.text_field :photo_url %>
-  </div>
-
-  <div class="field">
-    <%= form.label :voice_url %>
-    <%= form.text_field :voice_url %>
   </div>
 
   <div class="actions">

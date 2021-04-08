@@ -68,4 +68,12 @@ class User
   field :zip, type: String
   field :photo_url, type: String
   field :voice_url, type: String
+
+  validates :first_name, :presence => true
+  validates :last_name, :presence => true
+  validates :address_line1, :presence => true
+  validates :city, :presence => true
+  validates :state, :presence => true
+  validates :zip, :presence => true
+
 end
