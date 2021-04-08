@@ -22,3 +22,17 @@
 	11. rails g rspec:install
 	
 	12. rails webpacker:install 
+	
+	
+	----
+	
+	
+	1. Run MongoDB Locally
+	https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+	
+	admin cmd: "C:\Program Files\MongoDB\Server\4.4\bin\mongo.exe"
+	
+	2. Run Puma Server 
+	
+	bash: rails s
+	
