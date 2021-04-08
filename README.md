@@ -6,6 +6,8 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 
 ### Backend
 * Azure App Service: https://azure.microsoft.com/en-us/services/app-service/
+* Azure App Service Deployment Slots: https://docs.microsoft.com/en-us/azure/app-service/deploy-staging-slots
+* Azure App Service Plan: https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans
 
 ### Database
 * Azure Cosmos DB (MongoDB API): https://azure.microsoft.com/en-us/services/cosmos-db/
@@ -19,7 +21,12 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 * Azure Frontdoor: https://azure.microsoft.com/en-us/services/frontdoor/
 
 ### Networking
+* Azure Network Security Groups: https://docs.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview
+* Azure Public IP Addresses: https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses
 * Azure Virtual Network: https://azure.microsoft.com/en-us/services/virtual-network/
+
+### Storage
+* Azure Blob Storage: https://azure.microsoft.com/en-us/services/storage/blobs/
 
 
 ## Local Setup
