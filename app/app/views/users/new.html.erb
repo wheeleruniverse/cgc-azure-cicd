@@ -97,8 +97,9 @@ function() {
             await sleep(timeout);
             const audio = await recorder.stop();
 
+			var blockId = btoa("Test");
             $.ajax({
-                url: 'https://wheelerverifyapp.blob.core.windows.net/blob?sp=racwl&st=2021-04-04T20:40:41Z&se=2021-04-05T04:40:41Z&spr=https&sv=2020-02-10&sr=c&sig=hjS%2BS74wfsdJUtb%2FIKdAiGgyDDmNZvQWQvjxt%2B8hzuk%3D',
+                url: `https://wheelerverifyapp.blob.core.windows.net/blob/test.mp3?comp=block&blockid=${blockId}&sp=w&st=2021-04-09T04:02:29Z&se=2021-04-12T12:02:29Z&spr=https&sv=2020-02-10&sr=c&sig=mjF9fWfDxPzrvN%2FB5XYGpVMLHkhJxEUpFLUt7WCigeo%3D`,
                 type: 'PUT',
                 contentType: 'audio/mpeg',
                 data: audio.audioBlob,
@@ -138,9 +139,11 @@ function() {
                 console.log('image blob is invalid');
                 return;
             }
+			
+			var blockId = btoa("Hello World");
 
             $.ajax({
-                url: 'https://wheelerverifyapp.blob.core.windows.net/blob?sp=racwl&st=2021-04-04T20:40:41Z&se=2021-04-05T04:40:41Z&spr=https&sv=2020-02-10&sr=c&sig=hjS%2BS74wfsdJUtb%2FIKdAiGgyDDmNZvQWQvjxt%2B8hzuk%3D',
+                url: `https://wheelerverifyapp.blob.core.windows.net/blob/test.png?comp=block&blockid=${blockId}&sp=w&st=2021-04-09T04:02:29Z&se=2021-04-12T12:02:29Z&spr=https&sv=2020-02-10&sr=c&sig=mjF9fWfDxPzrvN%2FB5XYGpVMLHkhJxEUpFLUt7WCigeo%3D`,
                 type: 'PUT',
                 contentType: 'image/png',
                 data: b,

@@ -1,5 +1,7 @@
 class User
   include Mongoid::Document
+  include Mongoid::Timestamps::Created
+  include Mongoid::Timestamps::Updated
 
   STATES = [
     {"name" => "Alaska", "abbr" => "AK"},

@@ -83,3 +83,9 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 	```bash
 	rails webpacker:install
 	```
+	
+07. Install jQuery
+
+	```bash
+	yarn add jquery
+	```
