@@ -15,7 +15,7 @@
     "resources":[
         {
             "apiVersion":"2021-01-15",
-            "kind":"GlobalDocumentDB",
+            "kind":"MongoDB",
             "location":"[resourceGroup().location]",
             "name":"[variables('dbAccount')]",
             "properties":{
