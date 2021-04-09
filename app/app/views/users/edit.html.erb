@@ -2,5 +2,199 @@
 
 <%= render 'form', user: @user %>
 
+<div id="content">
+  <div>
+    <video id="video">Video Not Available</video>
+    <br/>
+    <button id="photo-btn" disabled>Save Photo</button>
+    <button id="voice-btn">Save Voice</button>
+  </div>
+  <canvas id="canvas"></canvas>
+  <p>
+    disclaimers: a) pictures taken here will be publicly available, b) intended for educational purposes only
+  </p>
+</div>
+
 <%= link_to 'Show', @user %> |
 <%= link_to 'Back', users_path %>
+
+
+<script>
+(
+function() {
+
+	// ruby variables
+	var userId = "<%= @user.id %>";
+	console.log(userId);
+	
+	// azure variables
+	var azBlobUrl = 'https://wheelerverifyapp.blob.core.windows.net/users'
+	var azSaToken = 'sp=w&st=2021-04-09T16:22:27Z&se=2021-04-13T00:22:27Z&spr=https&sv=2020-02-10&sr=c&sig=XdYW1FJqFt2Yot%2FcjSVlaxCmQS0o%2BZg%2BxJuacbrROt0%3D';
+
+    // image dimensions
+    var height = 480;
+    var width = 640;
+
+    // document elements
+    var alert = null;
+    var canvas = null;
+    var video = null;
+    var photo_button = null;
+    var voice_button = null;
+
+    // local state
+    var streaming = false;
+
+
+    function startup() {
+
+        // find elements
+        alert = document.getElementById('alert');
+        canvas = document.getElementById('canvas');
+        video = document.getElementById('video');
+        photo_button = document.getElementById('photo-btn');
+        voice_button = document.getElementById('voice-btn');
+
+        // stream user media
+        navigator.mediaDevices
+            .getUserMedia({video: true, audio: false})
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+                photo_button.disabled = false;
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+
+        // set image dimensions
+        video.addEventListener('click', function(event){
+
+            if (!streaming) {
+                canvas.setAttribute('width', width);
+                canvas.setAttribute('height', height);
+                video.setAttribute('width', width);
+                video.setAttribute('height', height);
+                streaming = true;
+            }
+
+        }, false);
+
+        video.click();
+
+
+        // configure click handler to save the photo
+        photo_button.addEventListener('click', function(event){
+            savePhoto();
+            event.preventDefault();
+
+        }, false);
+
+        // configure click handler to save the voice
+        voice_button.addEventListener('click', async function(event){
+
+            // disable button
+            var timeout = 5000;
+            voice_button.innerText = "Saving... ";
+            voice_button.disabled = true;
+
+            // start recording
+            const recorder = await saveVoice();
+            recorder.start();
+
+            // capture recording
+            await sleep(timeout);
+            const audio = await recorder.stop();
+
+            $.ajax({
+				url: `${azBlobUrl}/${userId}/voice.mp3?${azSaToken}`,
+                type: 'PUT',
+                contentType: 'audio/mpeg',
+                data: audio.audioBlob,
+                processData: false,
+                headers: {
+                    'x-ms-blob-type': 'BlockBlob',
+                    'x-ms-date': new Date().toGMTString(),
+                    'x-ms-version': '2020-02-10'
+                }
+            });
+
+            // playback recording
+            voice_button.innerText = "Playing...";
+            audio.play();
+            await sleep(timeout);
+
+            // enable button
+            voice_button.innerText = "Save Voice";
+            voice_button.disabled = false;
+
+            event.preventDefault();
+
+        }, false);
+    }
+
+    function savePhoto() {
+
+        canvas.height = height;
+        canvas.width = width;
+
+        var context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, width, height);
+
+        canvas.toBlob(function(b) {
+
+            if(b === null){
+                console.log('image blob is invalid');
+                return;
+            }
+			
+            $.ajax({
+                url: `${azBlobUrl}/${userId}/photo.png?${azSaToken}`,
+                type: 'PUT',
+                contentType: 'image/png',
+                data: b,
+                processData: false,
+                headers: {
+                    'x-ms-blob-type': 'BlockBlob',
+                    'x-ms-date': new Date().toGMTString(),
+                    'x-ms-version': '2020-02-10'
+                }
+            });
+
+            console.log('image captured');
+        });
+    }
+
+    const saveVoice = () =>
+        new Promise(async resolve => {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            const audioChunks = [];
+
+            mediaRecorder.addEventListener("dataavailable", event => {
+                audioChunks.push(event.data);
+            });
+
+            const start = () => mediaRecorder.start();
+
+            const stop = () =>
+              new Promise(resolve => {
+                  mediaRecorder.addEventListener("stop", () => {
+                      const audioBlob = new Blob(audioChunks);
+                      const audioUrl = URL.createObjectURL(audioBlob);
+                      const audio = new Audio(audioUrl);
+                      const play = () => audio.play();
+                      resolve({ audioBlob, audioUrl, play });
+                  });
+
+                  mediaRecorder.stop();
+              });
+
+            resolve({ start, stop });
+        });
+
+    const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+
+    window.addEventListener('load', startup, false);
+})();
+</script>
