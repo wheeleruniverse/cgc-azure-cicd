@@ -16,25 +16,20 @@ variables:
   value: app
 
 steps:
-- script: |
-    echo "bundle install"
-    bundle install
+- script: bundle install
   displayName: 'bundle install'
   workingDirectory: $(appDir)
   
-- script: |
-    echo "source ~/.bashrc"
-    source ~/.bashrc
-    echo "rails webpacker:install"
-    rails webpacker:install
+- task: NodeTool@0 
+  inputs:
+    versionSpec: '14.16.1'
+  displayName: 'Install Node.js'
+
+- script: rails webpacker:install
   displayName: 'webpacker install'
   workingDirectory: $(appDir)
 
-- script: |
-    echo "source ~/.bashrc"
-    source ~/.bashrc
-    echo "yarn add jquery"
-    yarn add jquery
+- script: yarn add jquery
   displayName: 'yarn install'
   workingDirectory: $(appDir)
 
