@@ -16,18 +16,24 @@ variables:
   value: app
 
 steps:
-- script: bundle install
+- script: |
+    echo "bundle install"
+    bundle install
   displayName: 'bundle install'
   workingDirectory: $(appDir)
   
 - script: |
+    echo "source ~/.bashrc"
     source ~/.bashrc
+    echo "rails webpacker:install"
     rails webpacker:install
   displayName: 'webpacker install'
   workingDirectory: $(appDir)
 
 - script: |
+    echo "source ~/.bashrc"
     source ~/.bashrc
+    echo "yarn add jquery"
     yarn add jquery
   displayName: 'yarn install'
   workingDirectory: $(appDir)
