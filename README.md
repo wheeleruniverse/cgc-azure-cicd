@@ -29,6 +29,17 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 * Azure Blob Storage: https://azure.microsoft.com/en-us/services/storage/blobs/
 
 
+## Environment Variables
+
+### MONGODB_URI
+
+Valid MongoDB Connection URI
+
+### STORAGE_SAS
+
+Valid Azure Blob Shared Access Signature
+
+
 ## Local Setup
 
 ### MongoDB (Windows 10 Home)
@@ -50,41 +61,62 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 
 ### Ruby on Rails (Ubuntu 20.04 LTS WSL)
 
-01. Install Ruby Version Manager (rvm): https://github.com/rvm/ubuntu_rvm
+01. Install Dependencies
 
-02. Install Ruby
+	```bash
+	sudo apt-get -y install software-properties-common
+	sudo apt-add-repository -y ppa:rael-gc/rvm
+	sudo apt-get -y update
+	```
+
+02. Install Ruby Version Manager (rvm): https://github.com/rvm/ubuntu_rvm
+
+	```bash
+	sudo apt-get -y install rvm
+	sudo usermod -a -G rvm wheeler146
+	sudo reboot
+	```
+	
+03. Enable Gemsets
+
+	```bash
+	rvm -v 
+	rvm user gemsets
+	```
+
+04. Install Ruby
 
 	```bash
 	rvm install 2.6.2
 	rvm use 2.6.2
 	```
 	
-03. Create Gemset
+05. Create Gemset
 
 	```bash
-	rvm create gemset verify-app
-	rvm use gemset verify-app
+	rvm gemset create verify-app
+	rvm gemset use verify-app
 	```
 	
-04. Install Rails
+06. Install Rails
 	
 	```bash
 	gem install rails
 	```
 
-05. Install Bundle
+07. Install Bundle
 
 	```bash
 	bundle install
 	```
 	
-06. Install Webpack
+08. Install Webpack
 
 	```bash
 	rails webpacker:install
 	```
 	
-07. Install jQuery
+09. Install jQuery
 
 	```bash
 	yarn add jquery

@@ -13,62 +13,19 @@ pool:
 
 variables:
 - name: appDir
-  value: verify-app
+  value: app
 
 steps:
-- script: |
-    sudo apt-get update
-    sudo apt-get install autoconf
-    sudo apt-get install bison
-    sudo apt-get install build-essential
-    sudo apt-get install curl
-    sudo apt-get install git
-    sudo apt-get install libffi-dev
-    sudo apt-get install libgdbm-dev
-    sudo apt-get install libncurses5-dev
-    sudo apt-get install libreadline-dev
-    sudo apt-get install libssl-dev
-    sudo apt-get install libyaml-dev
-    sudo apt-get install zlib1g-dev
-  displayName: 'install dependencies'
+- script: bundle install
+  displayName: 'bundle install'
   workingDirectory: $(appDir)
   
-- script: |
-    # get installer and run installer
-    curl -sL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash -
-
-    # check for rbenv in path
-    grep -q rbenv ~/.bashrc
-    if [[ $? -eq 1 ]]; then
-
-        # update path
-        echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-        echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-        source ~/.bashrc
-    fi
-    rbenv -v
-  displayName: 'install rbenv'
-  workingDirectory: $(appDir)
-  
-- script: |
-    rbenv install 2.6.2
-    rbenv global 2.6.2
-    ruby -v
-  displayName: 'install ruby'
+- script: rails webpacker:install
+  displayName: 'webpacker install'
   workingDirectory: $(appDir)
 
-- script: |
-    gem install bundler
-    bundle install --retry=3 --jobs=4
-  displayName: 'install bundler'
-  workingDirectory: $(appDir)
-
-- script: rails db:migrate RAILS_ENV=test
-  displayName: 'rails db:migrate'
-  workingDirectory: $(appDir)
-
-- script: bundle exec rake
-  displayName: 'bundle exec rake'
+- script: yarn add jquery
+  displayName: 'yarn install'
   workingDirectory: $(appDir)
 
 - task: AzureWebApp@1

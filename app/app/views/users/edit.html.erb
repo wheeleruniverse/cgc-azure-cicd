@@ -25,12 +25,11 @@ function() {
 
 	// ruby variables
 	var userId = "<%= @user.id %>";
-	console.log(userId);
+	var azSaToken = "<%= ENV['STORAGE_SAS'] %>";
 	
 	// azure variables
 	var azBlobUrl = 'https://wheelerverifyapp.blob.core.windows.net/users'
-	var azSaToken = 'sp=w&st=2021-04-09T16:22:27Z&se=2021-04-13T00:22:27Z&spr=https&sv=2020-02-10&sr=c&sig=XdYW1FJqFt2Yot%2FcjSVlaxCmQS0o%2BZg%2BxJuacbrROt0%3D';
-
+	
     // image dimensions
     var height = 480;
     var width = 640;

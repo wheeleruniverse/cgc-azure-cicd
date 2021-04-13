@@ -1,8 +1,7 @@
 development:
   clients:
     default:
-      # uri: "<%= ENV['MONGODB_URI'] %>"
-      uri: mongodb://wheeler-verify-app-mongo-db:H428BszKFgZXSvcJv2y1ye03MTgsZPDL2a2eeP23k85hy015OvZ5MWMFfD211FTnHkK3ssdwEAKEjIdIZdTkug==@wheeler-verify-app-mongo-db.mongo.cosmos.azure.com:10255/main?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@wheeler-verify-app-mongo-db@
+      uri: "<%= ENV['MONGODB_URI'] %>"
       options:
         connect_timeout: 15
   sessions:
