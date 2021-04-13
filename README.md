@@ -103,20 +103,37 @@ Valid Azure Blob Shared Access Signature
 	```bash
 	gem install rails
 	```
+	
+07. Install Node Version Manager (nvm): https://github.com/nvm-sh/nvm
 
-07. Install Bundle
+	```bash
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+	source ~/.bashrc
+	nvm -v 
+	```
+	
+08. Install Node.js
+
+	```bash
+	nvm install 14.16.1
+	nvm use 14.16.1
+	node -v
+	npm -v
+	```
+
+09. Install Bundle
 
 	```bash
 	bundle install
 	```
 	
-08. Install Webpack
+10. Install Webpack
 
 	```bash
 	rails webpacker:install
 	```
 	
-09. Install jQuery
+11. Install jQuery
 
 	```bash
 	yarn add jquery
