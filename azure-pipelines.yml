@@ -20,11 +20,15 @@ steps:
   displayName: 'bundle install'
   workingDirectory: $(appDir)
   
-- script: rails webpacker:install
+- script: |
+    source ~/.bashrc
+    rails webpacker:install
   displayName: 'webpacker install'
   workingDirectory: $(appDir)
 
-- script: yarn add jquery
+- script: |
+    source ~/.bashrc
+    yarn add jquery
   displayName: 'yarn install'
   workingDirectory: $(appDir)
 
