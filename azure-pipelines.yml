@@ -24,6 +24,7 @@ steps:
 - script: |
     npm install --global yarn
     yarn --version
+    yarn install --check-files
   displayName: 'Install Yarn'
   workingDirectory: $(appDir)
   
