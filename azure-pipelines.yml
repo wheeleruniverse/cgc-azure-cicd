@@ -16,21 +16,27 @@ variables:
   value: app
 
 steps:
-- script: bundle install
-  displayName: 'bundle install'
-  workingDirectory: $(appDir)
-  
 - task: NodeTool@0 
   inputs:
     versionSpec: '14.16.1'
-  displayName: 'Install Node.js'
-
+  displayName: 'Install Node'
+  
+- script: |
+    npm install --global yarn
+    yarn --version
+  displayName: 'Install Yarn'
+  workingDirectory: $(appDir)
+  
+- script: bundle install
+  displayName: 'Install Bundle Dependencies'
+  workingDirectory: $(appDir)
+  
 - script: rails webpacker:install
-  displayName: 'webpacker install'
+  displayName: 'Install Webpacker Dependencies'
   workingDirectory: $(appDir)
 
 - script: yarn add jquery
-  displayName: 'yarn install'
+  displayName: 'Install Yarn Dependencies'
   workingDirectory: $(appDir)
 
 - task: AzureWebApp@1
