@@ -112,7 +112,7 @@ Valid Azure Blob Shared Access Signature
 	nvm -v 
 	```
 	
-08. Install Node.js
+08. Install Node
 
 	```bash
 	nvm install 14.16.1
@@ -121,20 +121,33 @@ Valid Azure Blob Shared Access Signature
 	npm -v
 	```
 
-09. Install Bundle
+09. Install Yarn
 
 	```bash
+	npm install --global yarn
+	yarn --version
+	
+	cd app
+	yarn install --check-files
+	```
+
+10. Install Bundle
+
+	```bash
+	cd app
 	bundle install
 	```
 	
-10. Install Webpack
+11. Install Webpack
 
 	```bash
+	cd app
 	rails webpacker:install
 	```
 	
-11. Install jQuery
+12. Install jQuery
 
 	```bash
+	cd app
 	yarn add jquery
 	```
