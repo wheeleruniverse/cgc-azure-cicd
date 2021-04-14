@@ -139,15 +139,15 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 	```bash
 	bundle install
 	```
-	
-12. Install Webpack Dependencies
 
-	```bash
-	rails webpacker:install
-	```
-
-13. Install Yarn Dependencies
+12. Install Yarn Dependencies
 
 	```bash
 	yarn install --check-files
+	```
+	
+13. Install Webpack Dependencies
+
+	```bash
+	rails webpacker:install
 	```

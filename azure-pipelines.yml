@@ -30,13 +30,13 @@ steps:
 - script: bundle install
   displayName: 'Install Bundle Dependencies'
   workingDirectory: $(appDir)
+
+- script: yarn install --check-files
+  displayName: 'Install Yarn Dependencies'
+  workingDirectory: $(appDir)
   
 - script: rails webpacker:install
   displayName: 'Install Webpacker Dependencies'
-  workingDirectory: $(appDir)
-  
-- script: yarn install --check-files
-  displayName: 'Install Yarn Dependencies'
   workingDirectory: $(appDir)
 
 - task: AzureWebApp@1
