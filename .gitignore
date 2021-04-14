@@ -32,8 +32,3 @@
 # ignore vendor (keep directory)
 /app/vendor/*
 !/app/vendor/.keep
-
-## ___________________________________________
-## arm directory (Azure Resource Manager)
-
-# none (yet)

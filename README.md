@@ -33,11 +33,11 @@ https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-
 
 ### MONGODB_URI
 
-Valid MongoDB Connection URI
+* Valid MongoDB Connection URI
 
 ### STORAGE_SAS
 
-Valid Azure Blob Shared Access Signature
+* Valid Azure Blob Shared Access Signature
 
 
 ## Local Setup
@@ -126,28 +126,28 @@ Valid Azure Blob Shared Access Signature
 	```bash
 	npm install --global yarn
 	yarn --version
-	
-	cd app
-	yarn install --check-files
 	```
-
-10. Install Bundle
+	
+10. Change Directory
 
 	```bash
 	cd app
+	```
+
+11. Install Bundle Dependencies
+
+	```bash
 	bundle install
 	```
 	
-11. Install Webpack
+12. Install Webpack Dependencies
 
 	```bash
-	cd app
 	rails webpacker:install
 	```
-	
-12. Install jQuery
+
+13. Install Yarn Dependencies
 
 	```bash
-	cd app
-	yarn add jquery
+	yarn install --check-files
 	```
