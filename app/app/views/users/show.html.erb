@@ -35,5 +35,60 @@
   <%= @user.zip %>
 </p>
 
+<div id="content">
+  <div>
+    <img id="render-photo" src="" alt="photo" onerror="this.style.display='none'"/>
+    <br/>
+    <audio id="audio-ctrl" controls>
+      <source id="render-voice" src="" type="audio/mpeg">
+      Your browser does not support the audio tag.
+    </audio>
+  </div>
+</div>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>
+
+
+<script>
+    $(document).on('turbolinks:load', function() {
+
+        // ruby variables
+        let userId = "<%= @user.id %>";
+        let azSaToken = "<%= ENV['STORAGE_SAS'] %>".replaceAll("&amp;", "&");
+
+        // azure variables
+        let azBlobUrl = 'https://wheelerverifyapp.blob.core.windows.net/users'
+
+        // find elements
+        let render_photo = document.getElementById('render-photo');
+        let render_voice = document.getElementById('render-voice');
+        let audio_ctrl = document.getElementById('audio-ctrl');
+
+        // conf photo
+        if (render_photo != null) {
+            render_photo.src = getBlobUrl('photo.png');
+            render_photo.height = 480;
+            render_photo.width = 640;
+        }
+
+        // conf voice
+        if(render_voice != null) {
+            render_voice.src = getBlobUrl('voice.mp3');
+            audio_ctrl.load();
+
+            render_voice.addEventListener("error", function (e) {
+                console.log(e);
+                audio_ctrl.parentNode.removeChild(audio_ctrl);
+            });
+        }
+
+        function getBlobUrl(type){
+            if(azBlobUrl == null || userId == null || type == null || azSaToken == null){
+                console.log("getBlobUrl: parameters are null")
+                return "";
+            }
+            return `${azBlobUrl}/${userId}/${type}?${azSaToken}`;
+        }
+    });
+</script>
