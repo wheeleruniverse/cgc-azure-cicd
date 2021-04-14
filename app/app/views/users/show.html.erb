@@ -60,7 +60,7 @@
         // azure variables
         let azBlobUrl = 'https://wheelerverifyapp.blob.core.windows.net/users'
 
-        // find elements
+        // document elements
         let render_photo = document.getElementById('render-photo');
         let render_voice = document.getElementById('render-voice');
         let audio_ctrl = document.getElementById('audio-ctrl');
@@ -73,13 +73,15 @@
         }
 
         // conf voice
-        if(render_voice != null) {
+        if(audio_ctrl != null && render_voice != null) {
             render_voice.src = getBlobUrl('voice.mp3');
             audio_ctrl.load();
 
-            render_voice.addEventListener("error", function (e) {
-                console.log(e);
-                audio_ctrl.parentNode.removeChild(audio_ctrl);
+            render_voice.addEventListener("error", function () {
+                let parent = audio_ctrl != null ? audio_ctrl.parentNode : null;
+                if (parent != null) {
+                    parent.removeChild(audio_ctrl);
+                }
             });
         }
 

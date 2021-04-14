@@ -20,180 +20,192 @@
 
 
 <script>
-(
-function() {
+    $(document).on('turbolinks:load', function() {
 
-	// ruby variables
-	var userId = "<%= @user.id %>";
-	var azSaToken = "<%= ENV['STORAGE_SAS'] %>";
-	
-	// azure variables
-	var azBlobUrl = 'https://wheelerverifyapp.blob.core.windows.net/users'
-	
-    // image dimensions
-    var height = 480;
-    var width = 640;
+        // ruby variables
+        let userId = "<%= @user.id %>";
+        let azSaToken = "<%= ENV['STORAGE_SAS'] %>".replaceAll("&amp;", "&");
 
-    // document elements
-    var alert = null;
-    var canvas = null;
-    var video = null;
-    var photo_button = null;
-    var voice_button = null;
+        // azure variables
+        let azBlobUrl = 'https://wheelerverifyapp.blob.core.windows.net/users'
 
-    // local state
-    var streaming = false;
+        // document elements
+        let canvas = document.getElementById('canvas');
+        let video = document.getElementById('video');
+        let photo_button = document.getElementById('photo-btn');
+        let voice_button = document.getElementById('voice-btn');
 
+        // image dimensions
+        let height = 480;
+        let width = 640;
 
-    function startup() {
-
-        // find elements
-        alert = document.getElementById('alert');
-        canvas = document.getElementById('canvas');
-        video = document.getElementById('video');
-        photo_button = document.getElementById('photo-btn');
-        voice_button = document.getElementById('voice-btn');
+        // local state
+        let streaming = false;
 
         // stream user media
-        navigator.mediaDevices
-            .getUserMedia({video: true, audio: false})
-            .then(function(stream) {
-                video.srcObject = stream;
-                video.play();
-                photo_button.disabled = false;
-            })
-            .catch(function(err) {
-                console.log(err);
-            });
+        if(canvas != null && video != null) {
 
-        // set image dimensions
-        video.addEventListener('click', function(event){
-
-            if (!streaming) {
-                canvas.setAttribute('width', width);
-                canvas.setAttribute('height', height);
-                video.setAttribute('width', width);
-                video.setAttribute('height', height);
-                streaming = true;
-            }
-
-        }, false);
-
-        video.click();
-
-
-        // configure click handler to save the photo
-        photo_button.addEventListener('click', function(event){
-            savePhoto();
-            event.preventDefault();
-
-        }, false);
-
-        // configure click handler to save the voice
-        voice_button.addEventListener('click', async function(event){
-
-            // disable button
-            var timeout = 5000;
-            voice_button.innerText = "Saving... ";
-            voice_button.disabled = true;
-
-            // start recording
-            const recorder = await saveVoice();
-            recorder.start();
-
-            // capture recording
-            await sleep(timeout);
-            const audio = await recorder.stop();
-
-            $.ajax({
-				url: `${azBlobUrl}/${userId}/voice.mp3?${azSaToken}`,
-                type: 'PUT',
-                contentType: 'audio/mpeg',
-                data: audio.audioBlob,
-                processData: false,
-                headers: {
-                    'x-ms-blob-type': 'BlockBlob',
-                    'x-ms-date': new Date().toGMTString(),
-                    'x-ms-version': '2020-02-10'
-                }
-            });
-
-            // playback recording
-            voice_button.innerText = "Playing...";
-            audio.play();
-            await sleep(timeout);
-
-            // enable button
-            voice_button.innerText = "Save Voice";
-            voice_button.disabled = false;
-
-            event.preventDefault();
-
-        }, false);
-    }
-
-    function savePhoto() {
-
-        canvas.height = height;
-        canvas.width = width;
-
-        var context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, width, height);
-
-        canvas.toBlob(function(b) {
-
-            if(b === null){
-                console.log('image blob is invalid');
-                return;
-            }
-			
-            $.ajax({
-                url: `${azBlobUrl}/${userId}/photo.png?${azSaToken}`,
-                type: 'PUT',
-                contentType: 'image/png',
-                data: b,
-                processData: false,
-                headers: {
-                    'x-ms-blob-type': 'BlockBlob',
-                    'x-ms-date': new Date().toGMTString(),
-                    'x-ms-version': '2020-02-10'
-                }
-            });
-
-            console.log('image captured');
-        });
-    }
-
-    const saveVoice = () =>
-        new Promise(async resolve => {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const mediaRecorder = new MediaRecorder(stream);
-            const audioChunks = [];
-
-            mediaRecorder.addEventListener("dataavailable", event => {
-                audioChunks.push(event.data);
-            });
-
-            const start = () => mediaRecorder.start();
-
-            const stop = () =>
-              new Promise(resolve => {
-                  mediaRecorder.addEventListener("stop", () => {
-                      const audioBlob = new Blob(audioChunks);
-                      const audioUrl = URL.createObjectURL(audioBlob);
-                      const audio = new Audio(audioUrl);
-                      const play = () => audio.play();
-                      resolve({ audioBlob, audioUrl, play });
-                  });
-
-                  mediaRecorder.stop();
+            navigator.mediaDevices
+              .getUserMedia({video: true, audio: false})
+              .then(function (stream) {
+                  video.srcObject = stream;
+                  video.play();
+                  photo_button.disabled = false;
+              })
+              .catch(function (err) {
+                  console.log(err);
               });
 
-            resolve({ start, stop });
-        });
+            // set image dimensions
+            video.addEventListener('click', function () {
+                if (!streaming) {
+                    canvas.setAttribute('width', width.toString());
+                    canvas.setAttribute('height', height.toString());
+                    video.setAttribute('width', width.toString());
+                    video.setAttribute('height', height.toString());
+                    streaming = true;
+                }
+            }, false);
+            video.click();
+        }
 
-    const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+        // configure click handler to save the photo
+        if (photo_button != null) {
+            photo_button.addEventListener('click', async function (event) {
 
-    window.addEventListener('load', startup, false);
-})();
+                // disable button
+                let timeout = 3000;
+                photo_button.innerText = "Saving... ";
+                photo_button.disabled = true;
+
+                savePhoto();
+
+                // enable button
+                await sleep(timeout);
+                photo_button.innerText = "Save Photo";
+                photo_button.disabled = false;
+
+                event.preventDefault();
+
+            }, false);
+        }
+
+        // configure click handler to save the voice
+        if (voice_button != null) {
+            voice_button.addEventListener('click', async function (event) {
+
+                // disable button
+                let timeout = 10000;
+                voice_button.innerText = "Saving... ";
+                voice_button.disabled = true;
+
+                // start recording
+                const recorder = await saveVoice();
+                recorder.start();
+
+                // capture recording
+                await sleep(timeout);
+                const audio = await recorder.stop();
+
+                $.ajax({
+                    url: getBlobUrl('voice.mp3'),
+                    type: 'PUT',
+                    contentType: 'audio/mpeg',
+                    data: audio.audioBlob,
+                    processData: false,
+                    headers: {
+                        'x-ms-blob-type': 'BlockBlob',
+                        'x-ms-date': new Date().toGMTString(),
+                        'x-ms-version': '2020-02-10'
+                    }
+                });
+
+                // playback recording
+                voice_button.innerText = "Playing...";
+                audio.play();
+                await sleep(timeout);
+
+                // enable button
+                voice_button.innerText = "Save Voice";
+                voice_button.disabled = false;
+
+                event.preventDefault();
+
+            }, false);
+        }
+
+        function savePhoto() {
+
+            if(canvas == null){
+                return;
+            }
+
+            canvas.height = height;
+            canvas.width = width;
+
+            let context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, width, height);
+
+            canvas.toBlob(function(b) {
+
+                if(b === null){
+                    console.log('image blob is invalid');
+                    return;
+                }
+
+                $.ajax({
+                    url: getBlobUrl('photo.png'),
+                    type: 'PUT',
+                    contentType: 'image/png',
+                    data: b,
+                    processData: false,
+                    headers: {
+                        'x-ms-blob-type': 'BlockBlob',
+                        'x-ms-date': new Date().toGMTString(),
+                        'x-ms-version': '2020-02-10'
+                    }
+                });
+
+                console.log('image captured');
+            });
+        }
+
+        const saveVoice = () =>
+            new Promise(async resolve => {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const mediaRecorder = new MediaRecorder(stream);
+                const audioChunks = [];
+
+                mediaRecorder.addEventListener("dataavailable", event => {
+                    audioChunks.push(event.data);
+                });
+
+                const start = () => mediaRecorder.start();
+
+                const stop = () =>
+                  new Promise(resolve => {
+                      mediaRecorder.addEventListener("stop", () => {
+                          const audioBlob = new Blob(audioChunks);
+                          const audioUrl = URL.createObjectURL(audioBlob);
+                          const audio = new Audio(audioUrl);
+                          const play = () => audio.play();
+                          resolve({ audioBlob, audioUrl, play });
+                      });
+
+                      mediaRecorder.stop();
+                  });
+
+                resolve({ start, stop });
+            });
+
+        function getBlobUrl(type){
+            if(azBlobUrl == null || userId == null || type == null || azSaToken == null){
+                console.log("getBlobUrl: parameters are null")
+                return "";
+            }
+            return `${azBlobUrl}/${userId}/${type}?${azSaToken}`;
+        }
+
+        const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+    });
 </script>
