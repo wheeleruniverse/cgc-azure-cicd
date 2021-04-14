@@ -35,7 +35,9 @@ steps:
   displayName: 'Install Yarn Dependencies'
   workingDirectory: $(appDir)
   
-- script: rails webpacker:install
+- script: |
+    rm -rf bin/webpack*
+    rails webpacker:install
   displayName: 'Install Webpacker Dependencies'
   workingDirectory: $(appDir)
 

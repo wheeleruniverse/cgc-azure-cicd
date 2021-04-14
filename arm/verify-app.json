@@ -438,7 +438,7 @@
             "name":"[variables('saAccount')]",
             "properties":{
                 "accessTier":"Hot",
-                "allowBlobPublicAccess":false,
+                "allowBlobPublicAccess":true,
                 "allowSharedKeyAccess":true,
                 "minimumTlsVersion":"TLS1_2",
                 "networkAcls":{
