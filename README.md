@@ -57,145 +57,18 @@ The `azure-pipelines.yml` file contains the CI/CD pipeline for this project. The
 ## Project Structure
 
 ```
-├── README.md
-├── app
-│   ├── Gemfile
-│   ├── Gemfile.lock
-│   ├── Rakefile
-│   ├── app
-│   │   ├── assets
-│   │   │   ├── config
-│   │   │   │   └── manifest.js
-│   │   │   ├── images
-│   │   │   └── stylesheets
-│   │   │       ├── application.css
-│   │   │       ├── scaffolds.scss
-│   │   │       └── users.scss
-│   │   ├── channels
-│   │   │   └── application_cable
-│   │   │       ├── channel.rb
-│   │   │       └── connection.rb
-│   │   ├── controllers
-│   │   │   ├── application_controller.rb
-│   │   │   ├── concerns
-│   │   │   └── users_controller.rb
-│   │   ├── helpers
-│   │   │   ├── application_helper.rb
-│   │   │   └── users_helper.rb
-│   │   ├── javascript
-│   │   │   ├── channels
-│   │   │   │   ├── consumer.js
-│   │   │   │   └── index.js
-│   │   │   └── packs
-│   │   │       └── application.js
-│   │   ├── jobs
-│   │   │   └── application_job.rb
-│   │   ├── mailers
-│   │   │   └── application_mailer.rb
-│   │   ├── models
-│   │   │   ├── concerns
-│   │   │   └── user.rb
-│   │   └── views
-│   │       ├── layouts
-│   │       │   ├── application.html.erb
-│   │       │   ├── mailer.html.erb
-│   │       │   └── mailer.text.erb
-│   │       └── users
-│   │           ├── _form.html.erb
-│   │           ├── _user.json.jbuilder
-│   │           ├── edit.html.erb
-│   │           ├── index.html.erb
-│   │           ├── index.json.jbuilder
-│   │           ├── new.html.erb
-│   │           ├── show.html.erb
-│   │           └── show.json.jbuilder
-│   ├── babel.config.js
-│   ├── bin
-│   │   ├── rails
-│   │   ├── rake
-│   │   ├── setup
-│   │   ├── webpack
-│   │   ├── webpack-dev-server
-│   │   └── yarn
-│   ├── config
-│   │   ├── application.rb
-│   │   ├── boot.rb
-│   │   ├── cable.yml
-│   │   ├── environment.rb
-│   │   ├── environments
-│   │   │   ├── development.rb
-│   │   │   ├── production.rb
-│   │   │   └── test.rb
-│   │   ├── initializers
-│   │   │   ├── application_controller_renderer.rb
-│   │   │   ├── assets.rb
-│   │   │   ├── backtrace_silencers.rb
-│   │   │   ├── content_security_policy.rb
-│   │   │   ├── cookies_serializer.rb
-│   │   │   ├── filter_parameter_logging.rb
-│   │   │   ├── inflections.rb
-│   │   │   ├── mime_types.rb
-│   │   │   └── wrap_parameters.rb
-│   │   ├── locales
-│   │   │   └── en.yml
-│   │   ├── mongoid.yml
-│   │   ├── puma.rb
-│   │   ├── routes.rb
-│   │   ├── spring.rb
-│   │   ├── webpack
-│   │   │   ├── development.js
-│   │   │   ├── environment.js
-│   │   │   ├── production.js
-│   │   │   └── test.js
-│   │   └── webpacker.yml
-│   ├── config.ru
-│   ├── lib
-│   │   ├── assets
-│   │   └── tasks
-│   ├── log
-│   ├── package.json
-│   ├── postcss.config.js
-│   ├── public
-│   │   ├── 404.html
-│   │   ├── 422.html
-│   │   ├── 500.html
-│   │   ├── apple-touch-icon-precomposed.png
-│   │   ├── apple-touch-icon.png
-│   │   ├── favicon.ico
-│   │   ├── packs
-│   │   │   └── js
-│   │   │       ├── application-bb3e09010d8573c91397.js
-│   │   │       └── application-bb3e09010d8573c91397.js.map
-│   │   └── robots.txt
-│   ├── spec
-│   │   ├── helpers
-│   │   │   └── users_helper_spec.rb
-│   │   ├── models
-│   │   │   └── user_spec.rb
-│   │   ├── rails_helper.rb
-│   │   ├── requests
-│   │   │   └── users_spec.rb
-│   │   ├── routing
-│   │   │   └── users_routing_spec.rb
-│   │   ├── spec_helper.rb
-│   │   └── views
-│   │       └── users
-│   │           ├── edit.html.erb_spec.rb
-│   │           ├── index.html.erb_spec.rb
-│   │           ├── new.html.erb_spec.rb
-│   │           └── show.html.erb_spec.rb
-│   ├── tmp
-│   ├── vendor
-│   └── yarn.lock
-├── arm
-│   ├── ruby-agent-parameters.json
-│   ├── ruby-agent.json
-│   ├── verify-app-parameters.json
-│   └── verify-app.json
-├── azure-pipelines.yml
-└── bin
-    ├── 001-ruby-agent.sh
-    └── 002-ruby-agent.sh
+.
+├── app/                  # Contains the Ruby on Rails application source code
+│   ├── app/              # Core application (MVC: Models, Views, Controllers)
+│   ├── config/           # Application configuration, initializers, and routes
+│   ├── spec/             # RSpec tests for the application
+│   └── Gemfile           # Ruby language dependency manifest
+├── arm/                  # Azure Resource Manager (ARM) templates for Infrastructure as Code
+│   ├── ruby-agent.json   # ARM template for the primary application resources
+│   └── verify-app.json   # ARM template for verification resources
+├── bin/                  # Helper shell scripts for various tasks
+├── azure-pipelines.yml   # CI/CD pipeline definition for Azure DevOps
+└── README.md             # You are here!
 ```
 
 -----
