@@ -1,153 +1,206 @@
-# cgc-azure-cicd
-https://acloudguru.com/blog/engineering/cloudguruchallenge-build-a-continuously-integrated-global-azure-web-app
+Of course, here is a comprehensive README for your GitHub repository:
 
+# Cloud Guru Challenge: Azure CI/CD with Ruby on Rails
 
-## Architecture
+This project is a response to the A Cloud Guru challenge to build a continuously integrated global Azure web app. The goal was to create a web application with a CI/CD pipeline that is globally performant and protected against online attacks.
 
-### Backend
-* Azure App Service: https://azure.microsoft.com/en-us/services/app-service/
-* Azure App Service Deployment Slots: https://docs.microsoft.com/en-us/azure/app-service/deploy-staging-slots
-* Azure App Service Plan: https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans
+-----
 
-### Database
-* Azure Cosmos DB (MongoDB API): https://azure.microsoft.com/en-us/services/cosmos-db/
+## 🚀 Features
 
-### DevOps
-* Azure Pipelines: https://azure.microsoft.com/en-us/services/devops/pipelines/
-* Azure Resource Manager: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview
-* Azure Self-Hosted Agent (VM): https://azure.microsoft.com/en-us/services/virtual-machines/
+  * **Continuous Integration/Continuous Deployment (CI/CD):** The project uses Azure DevOps and a YAML pipeline to automatically build, test, and deploy the application.
+  * **Globally Performant:** Azure Front Door is used to accelerate the application at the edge and provide load balancing.
+  * **Secure:** The application is protected against online attacks.
+  * **Scalable:** The application is designed to be scalable to meet the needs of a global audience.
 
-### Frontend
-* Azure Frontdoor: https://azure.microsoft.com/en-us/services/frontdoor/
+-----
 
-### Networking
-* Azure Network Security Groups: https://docs.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview
-* Azure Public IP Addresses: https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses
-* Azure Virtual Network: https://azure.microsoft.com/en-us/services/virtual-network/
+## 💻 Tech Stack
 
-### Storage
-* Azure Blob Storage: https://azure.microsoft.com/en-us/services/storage/blobs/
+  * **Application:** Ruby on Rails
+  * **Cloud Provider:** Microsoft Azure
+  * **Database:** Azure Cosmos DB
+  * **CI/CD:** Azure DevOps
+  * **Infrastructure as Code (IaC):** ARM Templates
 
+-----
 
-## Environment Variables
+## 🏛️ Architecture
 
-### MONGODB_URI
+The application is deployed to Azure App Service and uses Azure Cosmos DB for data storage. Azure Front Door is used to provide a global entry point to the application and to accelerate content delivery. Azure DevOps is used to build, test, and deploy the application.
 
-* Valid MongoDB Connection URI
+-----
 
-### STORAGE_SAS
+## ⚙️ Getting Started
 
-* Valid Azure Blob Shared Access Signature
+To get started with this project, you will need to have the following:
 
+  * An Azure account
+  * An Azure DevOps account
+  * A GitHub account
 
-## Local Setup
+Once you have these accounts, you can clone the repository and follow the instructions in the `azure-pipelines.yml` file to deploy the application.
 
-### MongoDB (Windows 10 Home)
+-----
 
-01. Install MongoDB: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
+## 🚀 Deployment
 
-02. Run MongoDB: 
+The `azure-pipelines.yml` file contains the CI/CD pipeline for this project. The pipeline has the following stages:
 
-	```cmd
-	:: run as administrator
-	"C:\Program Files\MongoDB\Server\4.4\bin\mongo.exe"
-	```
-	
-### Ruby on Rails (Windows 10 Home)
+1.  **Build:** The build stage builds the Ruby on Rails application.
+2.  **Test:** The test stage runs the tests for the application.
+3.  **Deploy:** The deploy stage deploys the application to the "staging" slot of the Azure App Service.
+4.  **Swap:** The swap stage swaps the "staging" and "production" slots of the Azure App Service.
 
-01. Configure Windows Subsystem for Linux (WSL): https://docs.microsoft.com/en-us/windows/wsl/install-win10
+-----
 
-02. Install Ubuntu 20.04 LTS: https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71?rtc=1&activetab=pivot:overviewtab 
+## Project Structure
 
-### Ruby on Rails (Ubuntu 20.04 LTS WSL)
+```
+├── README.md
+├── app
+│   ├── Gemfile
+│   ├── Gemfile.lock
+│   ├── Rakefile
+│   ├── app
+│   │   ├── assets
+│   │   │   ├── config
+│   │   │   │   └── manifest.js
+│   │   │   ├── images
+│   │   │   └── stylesheets
+│   │   │       ├── application.css
+│   │   │       ├── scaffolds.scss
+│   │   │       └── users.scss
+│   │   ├── channels
+│   │   │   └── application_cable
+│   │   │       ├── channel.rb
+│   │   │       └── connection.rb
+│   │   ├── controllers
+│   │   │   ├── application_controller.rb
+│   │   │   ├── concerns
+│   │   │   └── users_controller.rb
+│   │   ├── helpers
+│   │   │   ├── application_helper.rb
+│   │   │   └── users_helper.rb
+│   │   ├── javascript
+│   │   │   ├── channels
+│   │   │   │   ├── consumer.js
+│   │   │   │   └── index.js
+│   │   │   └── packs
+│   │   │       └── application.js
+│   │   ├── jobs
+│   │   │   └── application_job.rb
+│   │   ├── mailers
+│   │   │   └── application_mailer.rb
+│   │   ├── models
+│   │   │   ├── concerns
+│   │   │   └── user.rb
+│   │   └── views
+│   │       ├── layouts
+│   │       │   ├── application.html.erb
+│   │       │   ├── mailer.html.erb
+│   │       │   └── mailer.text.erb
+│   │       └── users
+│   │           ├── _form.html.erb
+│   │           ├── _user.json.jbuilder
+│   │           ├── edit.html.erb
+│   │           ├── index.html.erb
+│   │           ├── index.json.jbuilder
+│   │           ├── new.html.erb
+│   │           ├── show.html.erb
+│   │           └── show.json.jbuilder
+│   ├── babel.config.js
+│   ├── bin
+│   │   ├── rails
+│   │   ├── rake
+│   │   ├── setup
+│   │   ├── webpack
+│   │   ├── webpack-dev-server
+│   │   └── yarn
+│   ├── config
+│   │   ├── application.rb
+│   │   ├── boot.rb
+│   │   ├── cable.yml
+│   │   ├── environment.rb
+│   │   ├── environments
+│   │   │   ├── development.rb
+│   │   │   ├── production.rb
+│   │   │   └── test.rb
+│   │   ├── initializers
+│   │   │   ├── application_controller_renderer.rb
+│   │   │   ├── assets.rb
+│   │   │   ├── backtrace_silencers.rb
+│   │   │   ├── content_security_policy.rb
+│   │   │   ├── cookies_serializer.rb
+│   │   │   ├── filter_parameter_logging.rb
+│   │   │   ├── inflections.rb
+│   │   │   ├── mime_types.rb
+│   │   │   └── wrap_parameters.rb
+│   │   ├── locales
+│   │   │   └── en.yml
+│   │   ├── mongoid.yml
+│   │   ├── puma.rb
+│   │   ├── routes.rb
+│   │   ├── spring.rb
+│   │   ├── webpack
+│   │   │   ├── development.js
+│   │   │   ├── environment.js
+│   │   │   ├── production.js
+│   │   │   └── test.js
+│   │   └── webpacker.yml
+│   ├── config.ru
+│   ├── lib
+│   │   ├── assets
+│   │   └── tasks
+│   ├── log
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── public
+│   │   ├── 404.html
+│   │   ├── 422.html
+│   │   ├── 500.html
+│   │   ├── apple-touch-icon-precomposed.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon.ico
+│   │   ├── packs
+│   │   │   └── js
+│   │   │       ├── application-bb3e09010d8573c91397.js
+│   │   │       └── application-bb3e09010d8573c91397.js.map
+│   │   └── robots.txt
+│   ├── spec
+│   │   ├── helpers
+│   │   │   └── users_helper_spec.rb
+│   │   ├── models
+│   │   │   └── user_spec.rb
+│   │   ├── rails_helper.rb
+│   │   ├── requests
+│   │   │   └── users_spec.rb
+│   │   ├── routing
+│   │   │   └── users_routing_spec.rb
+│   │   ├── spec_helper.rb
+│   │   └── views
+│   │       └── users
+│   │           ├── edit.html.erb_spec.rb
+│   │           ├── index.html.erb_spec.rb
+│   │           ├── new.html.erb_spec.rb
+│   │           └── show.html.erb_spec.rb
+│   ├── tmp
+│   ├── vendor
+│   └── yarn.lock
+├── arm
+│   ├── ruby-agent-parameters.json
+│   ├── ruby-agent.json
+│   ├── verify-app-parameters.json
+│   └── verify-app.json
+├── azure-pipelines.yml
+└── bin
+    ├── 001-ruby-agent.sh
+    └── 002-ruby-agent.sh
+```
 
-01. Install Dependencies
+-----
 
-	```bash
-	sudo apt-get -y install software-properties-common
-	sudo apt-add-repository -y ppa:rael-gc/rvm
-	sudo apt-get -y update
-	```
+## 📚 Resources
 
-02. Install Ruby Version Manager (rvm): https://github.com/rvm/ubuntu_rvm
-
-	```bash
-	sudo apt-get -y install rvm
-	sudo usermod -a -G rvm wheeler146
-	sudo reboot
-	```
-	
-03. Enable Gemsets
-
-	```bash
-	rvm -v 
-	rvm user gemsets
-	```
-
-04. Install Ruby
-
-	```bash
-	rvm install 2.6.2
-	rvm use 2.6.2
-	```
-	
-05. Create Gemset
-
-	```bash
-	rvm gemset create verify-app
-	rvm gemset use verify-app
-	```
-	
-06. Install Rails
-	
-	```bash
-	gem install rails
-	```
-	
-07. Install Node Version Manager (nvm): https://github.com/nvm-sh/nvm
-
-	```bash
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-	source ~/.bashrc
-	nvm -v 
-	```
-	
-08. Install Node
-
-	```bash
-	nvm install 14.16.1
-	nvm use 14.16.1
-	node -v
-	npm -v
-	```
-
-09. Install Yarn
-
-	```bash
-	npm install --global yarn
-	yarn --version
-	```
-	
-10. Change Directory
-
-	```bash
-	cd app
-	```
-
-11. Install Bundle Dependencies
-
-	```bash
-	bundle install
-	```
-
-12. Install Yarn Dependencies
-
-	```bash
-	yarn install --check-files
-	```
-	
-13. Install Webpack Dependencies
-
-	```bash
-	rails webpacker:install
-	```
+  * [\#CloudGuruChallenge: Build a continuously integrated global Azure app](https://www.pluralsight.com/resources/blog/cloud/cloudguruchallenge-build-a-continuously-integrated-global-azure-web-app)
+  * [Azure Ruby on Rails with CI/CD - DEV Community](https://blog.wheeleruniverse.com/azure-ruby-on-rails-with-cicd)
